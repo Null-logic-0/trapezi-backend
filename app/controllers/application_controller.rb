@@ -2,7 +2,7 @@ class ApplicationController < ActionController::API
   require "jwt"
 
   before_action :require_login
-  helper_method :current_user, :encode_token
+  helper_method :current_user, :encode_token, :decode_token
 
   private
 
@@ -38,6 +38,11 @@ class ApplicationController < ActionController::API
   end
 
   def require_login
-    render json: { error: "Unauthorized" }, status: :unauthorized unless current_user
+    token = request.headers["Authorization"]&.split(" ")&.last
+    if token.blank? || BlacklistedToken.exists?(token: token)
+      render json: { error: "Unauthorized" }, status: :unauthorized
+    else
+      @current_user = User.find(decode_token(token)["user_id"])
+    end
   end
 end
