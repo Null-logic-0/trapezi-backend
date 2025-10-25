@@ -15,6 +15,11 @@ class Api::V1::UsersController < ApplicationController
   # GET /users/1.json
   def show; end
 
+  def profile
+    @user = current_user
+    render json: @user.as_json, status: :ok
+  end
+
   # POST /users
   # POST /users.json
   def create
