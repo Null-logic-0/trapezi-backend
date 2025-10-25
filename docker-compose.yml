@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:18
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: trapezi_dev
+    ports:
+      - "5440:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    entrypoint: [ "entrypoint.dev.sh" ]
+    command: ./bin/rails server -b 0.0.0.0
+    volumes:
+      - .:/rails
+      - bundle_cache:${HOME}/.rvm/gems/ruby-3.4.4
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/trapezi_dev
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      RAILS_LOG_TO_STDOUT: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    entrypoint: [ "entrypoint.dev.sh" ]
+    command: tail -f /dev/null
+    volumes:
+      - .:/rails
+      - bundle_cache:${HOME}/.rvm/gems/ruby-3.4.4
+    ports:
+      - "9222:9222"
+    environment:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:password@db:5432/trapezi_test
+      RAILS_LOG_TO_STDOUT: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+  bundle_cache:

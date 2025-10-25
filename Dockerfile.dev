@@ -1,0 +1,45 @@
+# Dev Dockerfile for Rails 8 API-only
+ARG RUBY_VERSION=3.4.4
+FROM ruby:${RUBY_VERSION}-slim
+
+# Install base dependencies (including libyaml for psych)
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    curl \
+    git \
+    libpq-dev \
+    libyaml-dev \
+    libyaml-0-2 \
+    pkg-config \
+    vim \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
+
+# Set working directory
+WORKDIR /app
+
+# Environment configuration
+ENV RAILS_ENV=development \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_JOBS=4 \
+    BUNDLE_RETRY=3 \
+    BUNDLE_WITHOUT="test" \
+    RAILS_LOG_TO_STDOUT=true
+
+# Copy Gemfile and install dependencies
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler -v 2.7.2 && bundle install
+
+# Copy application code
+COPY . .
+
+# Add entrypoint script
+COPY entrypoint.dev.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.dev.sh
+
+# Expose Rails port
+EXPOSE 3000
+
+# Entrypoint + default command
+ENTRYPOINT ["entrypoint.dev.sh"]
+CMD ["rails", "server", "-b", "0.0.0.0"]
