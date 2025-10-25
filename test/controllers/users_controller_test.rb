@@ -6,7 +6,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get api_v1_users_path, as: :json
+    log_in_as(@user)
+    get api_v1_users_path, headers: @auth_headers, as: :json
     assert_response :success
   end
 
