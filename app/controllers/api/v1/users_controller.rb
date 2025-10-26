@@ -32,7 +32,7 @@ class Api::V1::UsersController < ApplicationController
         token: token
       }, status: :created
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { success: false, errors: @user.errors.to_hash(true) }, status: :unprocessable_entity
     end
   end
 
