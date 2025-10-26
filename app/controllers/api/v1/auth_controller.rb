@@ -1,5 +1,11 @@
 class Api::V1::AuthController < ApplicationController
-  before_action :require_login, except: [ :create ]
+  include ActionController::Cookies
+  include ActionController::RequestForgeryProtection
+
+  protect_from_forgery with: :exception
+
+  require "google-id-token"
+  before_action :require_login, except: [ :create, :google_oauth ]
 
   def create
     @user = User.find_by(email: params[:email])
@@ -9,6 +15,60 @@ class Api::V1::AuthController < ApplicationController
       render json: { token: token, user: @user }, status: :ok
     else
       render json: { error: "Invalid email or password" }, status: :unauthorized
+    end
+  end
+
+  def google_oauth
+    credential = params[:credential]
+
+    unless credential.is_a?(String)
+      return render json: { error: "Invalid credential format" }, status: :bad_request
+    end
+
+    begin
+      validator = GoogleIDToken::Validator.new
+
+      payload = if Rails.env.development?
+                  validator.check_with_ssl_disabled(credential, ENV["GOOGLE_CLIENT_ID"])
+      else
+                  validator.check(credential, ENV["GOOGLE_CLIENT_ID"])
+      end
+
+      email = payload["email"]
+      full_name = payload["name"]
+
+      first_name, *rest = full_name.split(" ")
+      last_name = rest.join(" ").presence
+
+      @user = User.find_or_initialize_by(email: email)
+      @user.name ||= first_name
+      @user.last_name ||= last_name
+      @user.password ||= SecureRandom.hex(10)
+
+      @user.is_admin ||= false
+      @user.is_blocked ||= false
+      @user.business_owner ||= false
+      @user.moderator ||= false
+
+      unless @user.save
+        return render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
+      end
+
+      token = encode_token({ user_id: @user.id })
+
+      cookies.signed[:jwt] = {
+        value: token,
+        httponly: true,
+        secure: Rails.env.production?,
+        same_site: :none
+      }
+
+      render json: { token: token, user: @user }, status: :ok
+
+    rescue GoogleIDToken::ValidationError => e
+      render json: { error: "Invalid Google token: #{e.message}" }, status: :unauthorized
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { error: e.record&.errors&.full_messages }, status: :unprocessable_entity
     end
   end
 
