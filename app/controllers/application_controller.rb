@@ -45,4 +45,18 @@ class ApplicationController < ActionController::API
       @current_user = User.find(decode_token(token)["user_id"])
     end
   end
+
+  def admin?
+    unless current_user&.is_admin?
+      render json: { error: "Admins only" }, status: :forbidden
+    end
+  end
+
+  def blocked?
+    @user = User.find_by(email: params[:email])
+
+    if @user&.is_blocked?
+      render json: { error: "Your account has been blocked by admin!" }, status: :forbidden
+    end
+  end
 end

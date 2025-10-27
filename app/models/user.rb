@@ -1,7 +1,8 @@
 class User < ApplicationRecord
   has_secure_password
-
   before_validation :normalize_fields
+
+  has_one_attached :avatar, dependent: :destroy
 
   # User validation
   validates :name, presence: true
@@ -13,7 +14,22 @@ class User < ApplicationRecord
 
   validates :password, length: { minimum: 10, allow_nil: true }
 
+  validate :acceptable_image
+
   private
+
+  def acceptable_image
+    return unless avatar.attached?
+
+    unless avatar.byte_size <= 8.megabyte
+      errors.add(:avatar, "must be less than 8MB")
+    end
+
+    acceptable_types = %w[image/png image/jpg image/jpeg]
+    unless acceptable_types.include? avatar.content_type
+      errors.add(:avatar, "must be a png, jpg, or jpeg format!")
+    end
+  end
 
   def normalize_fields
     self.email = email&.downcase&.strip if email.present?
