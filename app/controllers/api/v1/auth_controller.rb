@@ -6,6 +6,7 @@ class Api::V1::AuthController < ApplicationController
 
   require "google-id-token"
   before_action :require_login, except: [ :create, :google_oauth ]
+  before_action :blocked?, except: [ :destroy ]
 
   def create
     @user = User.find_by(email: params[:email])
@@ -36,6 +37,7 @@ class Api::V1::AuthController < ApplicationController
 
       email = payload["email"]
       full_name = payload["name"]
+      picture = payload["avatar"]
 
       first_name, *rest = full_name.split(" ")
       last_name = rest.join(" ").presence
@@ -43,6 +45,7 @@ class Api::V1::AuthController < ApplicationController
       @user = User.find_or_initialize_by(email: email)
       @user.name ||= first_name
       @user.last_name ||= last_name
+      @user.avatar ||= picture
       @user.password ||= SecureRandom.hex(10)
 
       @user.is_admin ||= false
@@ -52,6 +55,11 @@ class Api::V1::AuthController < ApplicationController
 
       unless @user.save
         return render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
+      end
+
+      if @user.is_blocked?
+        render json: { error: "Your account has been blocked by admin!" }, status: :forbidden
+        return
       end
 
       token = encode_token({ user_id: @user.id })

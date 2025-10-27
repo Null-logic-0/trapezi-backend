@@ -6,6 +6,9 @@ Rails.application.routes.draw do
       post "/login", to: "auth#create", as: :login
       post "/google_oauth", to: "auth#google_oauth", as: :google_oauth
       get "/profile", to: "users#profile", as: :profile
+      patch "/update_profile", to: "users#update_profile", as: :update_profile
+      patch "/update_password", to: "users#update_password", as: :update_password
+      delete "/delete_profile", to: "users#delete_profile", as: :delete_profile
       delete "/logout", to: "auth#destroy", as: :logout
     end
   end
