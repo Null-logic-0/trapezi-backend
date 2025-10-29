@@ -16,6 +16,18 @@ class User < ApplicationRecord
 
   validate :acceptable_image
 
+  def avatar_url
+    return unless avatar.attached?
+    Rails.application.routes.url_helpers.url_for(avatar)
+  end
+
+  def as_json(options = {})
+    super({
+            methods: [ :avatar_url ],
+            except: [ :password_digest ]
+          }.merge(options || {}))
+  end
+
   private
 
   def acceptable_image
