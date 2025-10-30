@@ -20,7 +20,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
 
     json_response = JSON.parse(response.body)
-    assert_equal "Invalid email or password", json_response["error"]
+    assert_equal I18n.t("errors.invalid_credentials"), json_response["error"]
   end
 
   test "should logout successfully with valid credentials" do

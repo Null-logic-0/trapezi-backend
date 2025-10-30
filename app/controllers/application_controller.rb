@@ -1,10 +1,26 @@
 class ApplicationController < ActionController::API
   require "jwt"
 
+  before_action :set_locale
   before_action :require_login
-  helper_method :current_user, :encode_token, :decode_token
+  helper_method :current_user, :encode_token, :decode_token, :formatted_errors
 
   private
+
+  def set_locale
+    locale = request.headers["Accept-Language"]&.slice(0, 2)&.to_sym
+    I18n.locale = I18n.available_locales.include?(locale) ? locale : I18n.default_locale
+  end
+
+  def formatted_errors(record)
+    record.errors.messages.transform_values { |msgs| msgs.map(&:to_s) }
+  end
+
+  def extract_locale_from_header
+    header = request.headers["Accept-Language"]
+    return nil unless header.present?
+    header.split(",").first&.slice(0, 2)
+  end
 
   def current_user
     return @current_user if @current_user

@@ -5,14 +5,20 @@ class User < ApplicationRecord
   has_one_attached :avatar, dependent: :destroy
 
   # User validation
-  validates :name, presence: true
-  validates :last_name, presence: true
-  validates :email, format: {
-    with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i,
-    message: "must be a valid email" },
-            uniqueness: { case_sensitive: false }
+  validates :name, presence: { message: I18n.t("activerecord.errors.models.user.attributes.name.blank") }
+  validates :last_name, presence: { message: I18n.t("activerecord.errors.models.user.attributes.last_name.blank") }
 
-  validates :password, length: { minimum: 10, allow_nil: true }
+  validates :email,
+            format: {
+              with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i,
+              message: I18n.t("activerecord.errors.models.user.attributes.email.invalid")
+            },
+            uniqueness: { case_sensitive: false, message: I18n.t("activerecord.errors.models.user.attributes.email.taken") }
+
+  validates :password,
+            presence: { message: I18n.t("activerecord.errors.models.user.attributes.password.blank") },
+            length: { minimum: 10, allow_nil: true, message: I18n.t("activerecord.errors.models.user.attributes.password.too_short") },
+            if: :password_required?
 
   validate :acceptable_image
 
@@ -30,16 +36,20 @@ class User < ApplicationRecord
 
   private
 
+  def password_required?
+    new_record? || password.present?
+  end
+
   def acceptable_image
     return unless avatar.attached?
 
     unless avatar.byte_size <= 8.megabyte
-      errors.add(:avatar, "must be less than 8MB")
+      errors.add(:avatar, I18n.t("activerecord.errors.models.user.attributes.avatar.too_large"))
     end
 
     acceptable_types = %w[image/png image/jpg image/jpeg]
     unless acceptable_types.include? avatar.content_type
-      errors.add(:avatar, "must be a png, jpg, or jpeg format!")
+      errors.add(:avatar, I18n.t("activerecord.errors.models.user.attributes.avatar.invalid_format"))
     end
   end
 

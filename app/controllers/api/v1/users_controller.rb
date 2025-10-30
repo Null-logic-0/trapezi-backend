@@ -28,26 +28,36 @@ class Api::V1::UsersController < ApplicationController
         token: token
       }, status: :created
     else
-      render json: { success: false, errors: @user&.errors&.to_hash(true) }, status: :unprocessable_entity
+      render json: { success: false, errors: formatted_errors(@user) }, status: :unprocessable_entity
     end
   end
 
   def update_profile
     @user = current_user
+    if profile_params[:avatar].present?
+      @user&.avatar&.attach(profile_params[:avatar])
+    end
     if @user&.update(profile_params.except(:current_password, :password, :password_confirmation))
       render json: @user.as_json, status: :ok
     else
-      render json: { success: false, errors: @user&.errors }, status: :unprocessable_entity
+      render json: { success: false, errors: @user&.errors&.full_messages }, status: :unprocessable_entity
     end
   end
 
   def update_password
     @user = current_user
+    unless password_params[:current_password].present?
+      return render json: { success: false, errors: { current_password: I18n.t("activerecord.errors.models.user.attributes.current_password.blank") } }, status: :unprocessable_entity
+    end
+
+    unless @user&.authenticate(password_params[:current_password])
+      return render json: { success: false, errors: { current_password: I18n.t("activerecord.errors.models.user.attributes.current_password.invalid") } }, status: :unauthorized
+    end
     if @user&.authenticate(password_params[:current_password])
       if @user&.update(password_params.slice(:password, :password_confirmation))
         render json: @user.as_json, status: :ok
       else
-        render json: { success: false, errors: @user&.errors }, status: :unprocessable_entity
+        render json: { success: false, errors: formatted_errors(@user) }, status: :unprocessable_entity
       end
     end
   end

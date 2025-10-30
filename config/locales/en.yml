@@ -1,31 +1,31 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  errors:
+    internal: "Something went wrong"
+    unauthorized: "You are not authorized"
+    invalid_credentials: "Invalid email or password"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            name:
+              blank: "Name can't be blank"
+            last_name:
+              blank: "Last name can't be blank"
+            email:
+              invalid: "Email must be a valid email"
+              taken: "Email has already been taken"
+            password:
+              blank: "Password is required"
+              too_short: "Password must be at least 10 characters"
+            password_confirmation:
+              confirmation: "doesn't match Password"
+            current_password:
+              blank: "Current password is required!"
+              invalid: "Incorrect password!"
+            avatar:
+              too_large: "Avatar must be less than 8MB"
+              invalid_format: "Avatar must be a png, jpg, or jpeg format"
+      errors:
+        invalid_credentials: "Invalid email or password"
+        blocked_by_admin: "Your account has been blocked by admin!"

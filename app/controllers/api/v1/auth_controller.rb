@@ -15,7 +15,8 @@ class Api::V1::AuthController < ApplicationController
       token = encode_token({ user_id: @user&.id })
       render json: { token: token, user: @user }, status: :ok
     else
-      render json: { error: "Invalid email or password" }, status: :unauthorized
+      render json: { error: I18n.t("errors.invalid_credentials") }, status: :unauthorized
+
     end
   end
 
@@ -53,11 +54,12 @@ class Api::V1::AuthController < ApplicationController
       @user.moderator ||= false
 
       unless @user.save
-        return render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
+        return render json: { error: formatted_errors(@user) }, status: :unprocessable_entity
       end
 
       if @user.is_blocked?
-        render json: { error: "Your account has been blocked by admin!" }, status: :forbidden
+
+        render json: { error: I18n.t("activerecord.errors.errors.blocked_by_admin") }, status: :forbidden
         return
       end
 
