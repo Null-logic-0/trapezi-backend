@@ -102,7 +102,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def profile_params
-    params.permit(:name, :last_name, :avatar)
+    params.permit(:name, :last_name, :avatar, :business_owner)
   end
 
   def user_params
