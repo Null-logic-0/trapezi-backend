@@ -1,0 +1,31 @@
+ka:
+  errors:
+    internal: "განცხადება ვერ შესრულდა"
+    unauthorized: "თქვენ არ გაქვთ დაშვება"
+    invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            name:
+              blank: "სახელი სავალდებულოა"
+            last_name:
+              blank: "გვარი სავალდებულოა"
+            email:
+              invalid: "ელ. ფოსტა არასწორია"
+              taken: "ელ. ფოსტა უკვე გამოყენებულია"
+            password:
+              blank: "პაროლი სავალდებულოა"
+              too_short: "პაროლი უნდა იყოს მინიმუმ 10 სიმბოლო"
+            password_confirmation:
+              confirmation: "პაროლი არ ემთხვევა"
+            current_password:
+              blank: "ამჟამინდელი პაროლი სავალდებულოა"
+              invalid: "პაროლი არასწორია"
+            avatar:
+              too_large: "ავატარი უნდა იყოს 8MB-მდე"
+              invalid_format: "ავატარი უნდა იყოს png, jpg ან jpeg ფორმატში"
+      errors:
+        invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"
+        blocked_by_admin: "პროფილი დაბლოკილია!"

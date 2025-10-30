@@ -8,13 +8,15 @@ Bundler.require(*Rails.groups)
 
 module TrapeziBackend
   class Application < Rails::Application
-    # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
     config.autoload_lib(ignore: %w[assets tasks])
-
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
-
     config.api_only = true
+
+    # -------------------------
+    # i18n configuration
+    # -------------------------
+    config.i18n.available_locales = [ :en, :ka ]
+    config.i18n.default_locale = :ka
+    config.i18n.enforce_available_locales = true
   end
 end
