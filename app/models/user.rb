@@ -2,6 +2,8 @@ class User < ApplicationRecord
   has_secure_password
   before_validation :normalize_fields
 
+  has_many :food_places, dependent: :destroy
+
   has_one_attached :avatar, dependent: :destroy
 
   # User validation

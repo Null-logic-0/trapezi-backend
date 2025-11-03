@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_27_091442) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_03_065205) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_27_091442) do
     t.index ["token"], name: "index_blacklisted_tokens_on_token"
   end
 
+  create_table "food_places", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "business_name"
+    t.text "description"
+    t.string "categories", default: [], null: false, array: true
+    t.string "address"
+    t.float "latitude"
+    t.float "longitude"
+    t.jsonb "working_schedule", default: {}
+    t.string "website"
+    t.string "facebook"
+    t.string "instagram"
+    t.string "tiktok"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_food_places_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "last_name"
@@ -65,4 +83,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_27_091442) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "food_places", "users"
 end

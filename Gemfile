@@ -6,7 +6,9 @@ gem "puma", ">= 5.0"
 gem "jbuilder"
 gem "jwt"
 gem "google-id-token"
-
+gem "geocoder"
+gem "redis"
+gem "certified"
 gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "solid_cache"
