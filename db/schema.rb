@@ -54,7 +54,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_03_065205) do
     t.bigint "user_id", null: false
     t.string "business_name"
     t.text "description"
-    t.string "category"
+    t.string "categories", default: [], null: false, array: true
     t.string "address"
     t.float "latitude"
     t.float "longitude"

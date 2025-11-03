@@ -30,18 +30,20 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create food_place" do
     log_in_as(@user)
-    post api_v1_food_places_path, params: {
-      business_name: "Trapezi Cafe",
-      description: "A cozy modern cafe serving organic pastries and coffee in the heart of Tbilisi.",
-      category: "cafe",
-      address: "Rustaveli Ave 15 Tbilisi, Georgia",
-      menu_pdf: Rack::Test::UploadedFile.new(Rails.root.join("test/fixtures/files/sample.pdf"), "application/pdf"),
-      images: [
-        Rack::Test::UploadedFile.new(Rails.root.join("test/fixtures/files/image1.png"), "image/png")
-      ],
+    post api_v1_food_places_path,
+         params: {
+           business_name: "Trapezi Cafe",
+           description: "A cozy modern cafe serving organic pastries and coffee in the heart of Tbilisi.",
+           categories: %w[cafe bar],
+           address: "Rustaveli Ave 15 Tbilisi, Georgia",
+           menu_pdf: fixture_file_upload("sample.pdf", "application/pdf"),
+           images: [
+             fixture_file_upload("image1.jpg", "image/jpg")
+           ]
 
-      working_schedule: "mon-fri: 09:00-22:00"
-    }, headers: @auth_headers
+         },
+         headers: @auth_headers
+
     assert_response :created
   end
 

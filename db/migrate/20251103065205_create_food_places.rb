@@ -4,7 +4,8 @@ class CreateFoodPlaces < ActiveRecord::Migration[8.0]
       t.references :user, null: false, foreign_key: true
       t.string :business_name
       t.text :description
-      t.string :category
+      t.string :categories, array: true, default: [], null: false
+
       t.string :address
       t.float :latitude
       t.float :longitude

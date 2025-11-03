@@ -3,9 +3,11 @@ ka:
     internal: "განცხადება ვერ შესრულდა"
     unauthorized: "თქვენ არ გაქვთ დაშვება"
     invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"
+
   activerecord:
     errors:
       models:
+
         user:
           attributes:
             name:
@@ -26,6 +28,38 @@ ka:
             avatar:
               too_large: "ავატარი უნდა იყოს 8MB-მდე"
               invalid_format: "ავატარი უნდა იყოს png, jpg ან jpeg ფორმატში"
+
+        food_place:
+          schedule:
+            closed: "დაკეტილია"
+          attributes:
+            business_name:
+              blank: "ბიზნესის სახელი სავალდებულოა"
+            description:
+              blank: "აღწერა სავალდებულოა"
+              too_long: "აღწერა უნდა იყოს მაქსიმუმ 200 სიმბოლო"
+            address:
+              blank: "მისამართი სავალდებულოა"
+            categories:
+              blank: "კატეგორიები სავალდებულოა"
+              too_many: "მაქსიმუმ %{count} კატეგორია შეიძლება იყოს"
+              invalid_entries: "არასწორი კატეგორია: %{list}"
+            working_schedule:
+              blank: "სამუშაო გრაფიკი სავალდებულოა"
+              invalid_format: "სამუშაო გრაფიკი უნდა იყოს hash-ის ფორმატში per-day schedule"
+              missing_keys: "%{day}-ს უნდა ჰქონდეს 'from' და 'to' კლავიშები"
+              invalid_time_format: "%{day}: დრო უნდა იყოს HH:MM ფორმატში"
+              closing_before_opening: "%{day}: დახურვის დრო უნდა იყოს გახსნის დროის შემდეგ"
+            images:
+              blank: "მინიმუმ ერთი სურათი უნდა იყოს ატვირთული"
+              invalid_format: "სურათი უნდა იყოს JPEG ან PNG ფორმატში"
+              too_many: "მაქსიმუმ %{count} სურათი შეიძლება იყოს"
+              too_large: "სურათი უნდა იყოს %{count}MB-მდე"
+            menu_pdf:
+              blank: "მენიუს PDF სავალდებულოა"
+              invalid_format: "მენიუს ფაილი უნდა იყოს PDF ფორმატში"
+              too_large: "მენიუს ფაილი უნდა იყოს %{count}MB-მდე"
+
       errors:
         invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"
         blocked_by_admin: "პროფილი დაბლოკილია!"

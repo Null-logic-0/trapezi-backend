@@ -1,11 +1,13 @@
 en:
   errors:
-    internal: "Something went wrong"
+    internal: "Request failed"
     unauthorized: "You are not authorized"
-    invalid_credentials: "Invalid email or password"
+    invalid_credentials: "Email or password is invalid"
+
   activerecord:
     errors:
       models:
+
         user:
           attributes:
             name:
@@ -13,19 +15,50 @@ en:
             last_name:
               blank: "Last name can't be blank"
             email:
-              invalid: "Email must be a valid email"
+              invalid: "Email is invalid"
               taken: "Email has already been taken"
             password:
-              blank: "Password is required"
+              blank: "Password can't be blank"
               too_short: "Password must be at least 10 characters"
             password_confirmation:
-              confirmation: "doesn't match Password"
+              confirmation: "Password confirmation doesn't match"
             current_password:
-              blank: "Current password is required!"
-              invalid: "Incorrect password!"
+              blank: "Current password can't be blank"
+              invalid: "Current password is invalid"
             avatar:
               too_large: "Avatar must be less than 8MB"
-              invalid_format: "Avatar must be a png, jpg, or jpeg format"
+              invalid_format: "Avatar must be in png, jpg, or jpeg format"
+
+        food_place:
+          schedule:
+            closed: "Closed"
+          attributes:
+            business_name:
+              blank: "Business name can't be blank"
+            description:
+              blank: "Description can't be blank"
+              too_long: "Description must be at most 200 characters"
+            address:
+              blank: "Address can't be blank"
+            categories:
+              blank: "Categories can't be blank"
+              too_many: "Maximum %{count} categories allowed"
+              invalid_entries: "Invalid entries: %{list}"
+            working_schedule:
+              blank: "Working schedule can't be blank"
+              invalid_format: "Working schedule must be a hash with per-day schedule"
+              missing_keys: "%{day} must have 'from' and 'to' keys"
+              invalid_time_format: "%{day}: times must be in HH:MM format"
+              closing_before_opening: "%{day}: closing time must be after opening time"
+            images:
+              blank: "At least one image must be attached"
+              invalid_format: "Images must be JPEG or PNG"
+              too_many: "Maximum %{count} images allowed"
+              too_large: "Image must be less than %{count}MB"
+            menu_pdf:
+              blank: "Menu PDF is required"
+              invalid_format: "Menu file must be in PDF format"
+              too_large: "Menu file must be less than %{count}MB"
       errors:
-        invalid_credentials: "Invalid email or password"
-        blocked_by_admin: "Your account has been blocked by admin!"
+        invalid_credentials: "Email or password is invalid"
+        blocked_by_admin: "Your profile has been blocked"

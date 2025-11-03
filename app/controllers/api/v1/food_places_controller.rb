@@ -26,9 +26,12 @@ class Api::V1::FoodPlacesController < ApplicationController
     @food_place = current_user&.food_places&.build(food_place_params)
 
     if @food_place.save
-      render json: @food_place, status: :created
+      render json: @food_place, success: true, status: :created
     else
-      render json: { success: false, errors: @food_place&.errors&.full_messages }, status: :unprocessable_entity
+      render json: {
+        success: false,
+        errors: formatted_errors(@food_place)
+      }, status: :unprocessable_entity
     end
   end
 
@@ -66,18 +69,25 @@ class Api::V1::FoodPlacesController < ApplicationController
   end
 
   def food_place_params
-    params.permit(
+    permitted = params.permit(
       :business_name,
       :description,
-      :category,
       :menu_pdf,
       :address,
-      :working_schedule,
+      { categories: [] },
       :website,
       :facebook,
       :instagram,
       :tiktok,
-      images: []
+      :working_schedule,
+      images: [],
+
     )
+
+    if permitted[:working_schedule].is_a?(String)
+      permitted[:working_schedule] = JSON.parse(permitted[:working_schedule]) rescue {}
+    end
+
+    permitted
   end
 end
