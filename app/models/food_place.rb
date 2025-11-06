@@ -31,6 +31,25 @@ class FoodPlace < ApplicationRecord
     end.join(", ")
   end
 
+  def images_url
+    return unless images.attached?
+    images.map do |img|
+      Rails.application.routes.url_helpers.url_for(img)
+    end
+  end
+
+  def as_json(options = {})
+    super({
+            methods: [ :images_url, :menu_url, :working_schedule_readable ],
+            except: [ :password_digest, :created_at, :updated_at ]
+          }.merge(options))
+  end
+
+  def menu_url
+    return unless menu_pdf.attached?
+    Rails.application.routes.url_helpers.url_for(menu_pdf)
+  end
+
   private
 
   # --- Categories validations ---
@@ -38,26 +57,31 @@ class FoodPlace < ApplicationRecord
 
   def categories_count_within_limit
     if categories.size > MAX_CATEGORIES
-      errors.add(:categories, "maximum #{MAX_CATEGORIES} categories allowed")
+      errors.add(:categories, I18n.t(
+        "activerecord.errors.models.food_place.attributes.categories.too_many",
+        count: MAX_CATEGORIES
+      ))
     end
   end
 
   def validate_categories_inclusion
     invalid = categories - CATEGORIES
     return if invalid.empty?
-    errors.add(:categories, "include invalid entries: #{invalid.join(', ')}")
+    errors.add(:categories, I18n.t(
+      "activerecord.errors.models.food_place.attributes.categories.invalid_entries",
+      list: invalid.join(", ")))
   end
 
   # --- Working schedule validation ---
   def validate_working_schedule_format
     unless working_schedule.is_a?(Hash)
-      errors.add(:working_schedule, "must be a hash with per-day schedule")
+      errors.add(:working_schedule, I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.invalid_format"))
       return
     end
 
     working_schedule&.each do |day, times|
       unless times.is_a?(Hash) && times.key?("from") && times.key?("to")
-        errors.add(:working_schedule, "#{day} must have 'from' and 'to' keys")
+        errors.add(:working_schedule, I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.missing_keys", day: day))
         next
       end
 
@@ -66,12 +90,14 @@ class FoodPlace < ApplicationRecord
       next if from.blank? && to.blank?
 
       unless from =~ /\A\d{2}:\d{2}\z/ && to =~ /\A\d{2}:\d{2}\z/
-        errors.add(:working_schedule, "#{day}: times must be in HH:MM format")
+        errors.add(:working_schedule,
+                   I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.invalid_time_format", day: day))
         next
       end
 
       if from >= to
-        errors.add(:working_schedule, "#{day}: closing time must be after opening time")
+        errors.add(:working_schedule,
+                   I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.closing_before_opening", day: day))
       end
     end
   end

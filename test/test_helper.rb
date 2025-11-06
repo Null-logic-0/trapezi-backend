@@ -14,6 +14,8 @@ module ActiveSupport
       JWT.encode(payload, Rails.application.secret_key_base)
     end
 
+    Rails.application.routes.default_url_options[:host] = "http://localhost:3000/"
+
     def log_in_as(user)
       token = encode_token({ user_id: user.id })
       @auth_headers = { "Authorization" => "Bearer #{token}" }
