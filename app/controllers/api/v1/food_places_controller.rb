@@ -46,7 +46,7 @@ class Api::V1::FoodPlacesController < ApplicationController
     if @food_place.update(food_place_params)
       render json: @food_place.as_json, status: :ok
     else
-      render json: { success: false, errors: @food_place.errors.full_messages }, status: :unprocessable_entity
+      render json: { success: false, errors: formatted_errors(@food_place) }, status: :unprocessable_entity
     end
   end
 
@@ -79,6 +79,7 @@ class Api::V1::FoodPlacesController < ApplicationController
       :facebook,
       :instagram,
       :tiktok,
+      :phone,
       :working_schedule,
       images: [],
 

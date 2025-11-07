@@ -5,7 +5,7 @@ class CreateFoodPlaces < ActiveRecord::Migration[8.0]
       t.string :business_name
       t.text :description
       t.string :categories, array: true, default: [], null: false
-
+      t.string :phone
       t.string :address
       t.float :latitude
       t.float :longitude
@@ -14,7 +14,7 @@ class CreateFoodPlaces < ActiveRecord::Migration[8.0]
       t.string :facebook
       t.string :instagram
       t.string :tiktok
-
+      t.boolean :is_vip, default: false
       t.timestamps
     end
   end

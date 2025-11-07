@@ -32,6 +32,14 @@ ka:
         food_place:
           schedule:
             closed: "დაკეტილია"
+          days:
+            monday: "ორშაბათი"
+            tuesday: "სამშაბათი"
+            wednesday: "ოთხშაბათი"
+            thursday: "ხუთშაბათი"
+            friday: "პარასკევი"
+            saturday: "შაბათი"
+            sunday: "კვირა"
           attributes:
             business_name:
               blank: "ბიზნესის სახელი სავალდებულოა"
@@ -40,6 +48,8 @@ ka:
               too_long: "აღწერა უნდა იყოს მაქსიმუმ 200 სიმბოლო"
             address:
               blank: "მისამართი სავალდებულოა"
+            phone:
+              invalid_format: "ტელეფონის ნომერი არასწორია"
             categories:
               blank: "კატეგორიები სავალდებულოა"
               too_many: "მაქსიმუმ %{count} კატეგორია შეიძლება იყოს"
@@ -49,7 +59,7 @@ ka:
               invalid_format: "სამუშაო გრაფიკი უნდა იყოს hash-ის ფორმატში per-day schedule"
               missing_keys: "%{day}-ს უნდა ჰქონდეს 'from' და 'to' კლავიშები"
               invalid_time_format: "%{day}: დრო უნდა იყოს HH:MM ფორმატში"
-              closing_before_opening: "%{day}: დახურვის დრო უნდა იყოს გახსნის დროის შემდეგ"
+              closing_before_opening: "დახურვის დრო უნდა იყოს გახსნის დროის შემდეგ"
             images:
               blank: "მინიმუმ ერთი სურათი უნდა იყოს ატვირთული"
               invalid_format: "სურათი უნდა იყოს JPEG ან PNG ფორმატში"
@@ -59,6 +69,7 @@ ka:
               blank: "მენიუს PDF სავალდებულოა"
               invalid_format: "მენიუს ფაილი უნდა იყოს PDF ფორმატში"
               too_large: "მენიუს ფაილი უნდა იყოს %{count}MB-მდე"
+
 
       errors:
         invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"

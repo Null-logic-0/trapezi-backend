@@ -8,6 +8,9 @@ class FoodPlace < ApplicationRecord
   # Categories
   CATEGORIES = %w[restaurant cafe bar bakery pastry].freeze
 
+  # Helper to display schedule nicely
+  MONDAY_FIRST = %w[monday tuesday wednesday thursday friday saturday sunday].freeze
+
   # Validations
   validates :business_name, :address, :categories, presence: true
   validates :description, presence: true, length: { maximum: 200 }
@@ -18,17 +21,39 @@ class FoodPlace < ApplicationRecord
   validate :validate_images
   validate :validate_menu_pdf
 
+  # --- Phone validation ---
+  VALID_PHONE_REGEX = /\A(\+995)?5?\d{9}\z/
+
+  validates :phone, format: {
+    with: VALID_PHONE_REGEX,
+    message: I18n.t("activerecord.errors.models.food_place.attributes.phone.invalid_format")
+  }
+
   # Geocoding
   geocoded_by :address
   after_validation :geocode, if: :will_save_change_to_address?
 
-  # Helper to display schedule nicely
-  def working_schedule_readable
-    (working_schedule || {}).map do |day, times|
-      from = times["from"] || "Closed"
-      to = times["to"] || "Closed"
-      "#{day.to_s.humanize}: #{from}-#{to}"
+  def working_schedule_readable(locale = I18n.locale)
+    (working_schedule || {}).slice(*MONDAY_FIRST).map do |day, times|
+      from = times["from"]
+      to = times["to"]
+
+      # If both from and to are blank,  show "Closed"
+      hours = if from.blank? && to.blank?
+                I18n.t("activerecord.errors.models.food_place.schedule.closed", locale: locale)
+      else
+                "#{from}-#{to}"
+      end
+
+      day_name = I18n.t("activerecord.errors.models.food_place.days.#{day}", locale: locale)
+      "#{day_name}: #{hours}"
     end.join(", ")
+  end
+
+  def working_schedule_translated(locale = I18n.locale)
+    (working_schedule || {}).slice(*MONDAY_FIRST).transform_keys do |day|
+      I18n.t("activerecord.errors.models.food_place.days.#{day}", locale: locale)
+    end
   end
 
   def images_url
@@ -91,13 +116,13 @@ class FoodPlace < ApplicationRecord
 
       unless from =~ /\A\d{2}:\d{2}\z/ && to =~ /\A\d{2}:\d{2}\z/
         errors.add(:working_schedule,
-                   I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.invalid_time_format", day: day))
+                   I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.invalid_time_format"))
         next
       end
 
       if from >= to
         errors.add(:working_schedule,
-                   I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.closing_before_opening", day: day))
+                   I18n.t("activerecord.errors.models.food_place.attributes.working_schedule.closing_before_opening"))
       end
     end
   end

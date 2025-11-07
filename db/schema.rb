@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_03_065205) do
     t.string "business_name"
     t.text "description"
     t.string "categories", default: [], null: false, array: true
+    t.string "phone"
     t.string "address"
     t.float "latitude"
     t.float "longitude"
@@ -63,6 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_03_065205) do
     t.string "facebook"
     t.string "instagram"
     t.string "tiktok"
+    t.boolean "is_vip", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_food_places_on_user_id"

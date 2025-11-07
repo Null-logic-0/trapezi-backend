@@ -35,6 +35,7 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
            business_name: "Trapezi Cafe",
            description: "A cozy modern cafe serving organic pastries and coffee in the heart of Tbilisi.",
            categories: %w[cafe bar],
+           phone: "+995555377505",
            address: "Rustaveli Ave 15 Tbilisi, Georgia",
            menu_pdf: fixture_file_upload("sample.pdf", "application/pdf"),
            images: [

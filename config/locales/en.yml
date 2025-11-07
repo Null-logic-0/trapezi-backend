@@ -32,12 +32,22 @@ en:
         food_place:
           schedule:
             closed: "Closed"
+          days:
+            monday: "Monday"
+            tuesday: "Tuesday"
+            wednesday: "Wednesday"
+            thursday: "Thursday"
+            friday: "Friday"
+            saturday: "Saturday"
+            sunday: "Sunday"
           attributes:
             business_name:
               blank: "Business name can't be blank"
             description:
               blank: "Description can't be blank"
               too_long: "Description must be at most 200 characters"
+            phone:
+              invalid_format: "Phone number is not valid"
             address:
               blank: "Address can't be blank"
             categories:
@@ -48,8 +58,8 @@ en:
               blank: "Working schedule can't be blank"
               invalid_format: "Working schedule must be a hash with per-day schedule"
               missing_keys: "%{day} must have 'from' and 'to' keys"
-              invalid_time_format: "%{day}: times must be in HH:MM format"
-              closing_before_opening: "%{day}: closing time must be after opening time"
+              invalid_time_format: "times must be in HH:MM format"
+              closing_before_opening: "closing time must be after opening time"
             images:
               blank: "At least one image must be attached"
               invalid_format: "Images must be JPEG or PNG"
@@ -59,6 +69,7 @@ en:
               blank: "Menu PDF is required"
               invalid_format: "Menu file must be in PDF format"
               too_large: "Menu file must be less than %{count}MB"
+
       errors:
         invalid_credentials: "Email or password is invalid"
         blocked_by_admin: "Your profile has been blocked"
