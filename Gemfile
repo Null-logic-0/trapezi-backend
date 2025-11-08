@@ -17,14 +17,14 @@ gem "solid_cable"
 gem "bootsnap", require: false
 gem "kamal", require: false
 gem "thruster", require: false
-gem "dotenv-rails", groups: [ :development, :test ]
+gem "dotenv-rails", groups: [:development, :test]
 gem "aws-sdk-s3"
 
 gem "rack-cors"
 
 group :development, :test do
-  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-  gem "brakeman", require: false
-  gem "rubocop-rails-omakase", require: false
-  gem "rails-controller-testing"
+	gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+	gem "brakeman", '~> 7.1.1', require: false
+	gem "rubocop-rails-omakase", require: false
+	gem "rails-controller-testing"
 end
