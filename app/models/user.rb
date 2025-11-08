@@ -3,6 +3,8 @@ class User < ApplicationRecord
   before_validation :normalize_fields
 
   has_many :food_places, dependent: :destroy
+  has_many :favorites, dependent: :destroy
+  has_many :favorite_food_places, through: :favorites, source: :food_place
 
   has_one_attached :avatar, dependent: :destroy
 

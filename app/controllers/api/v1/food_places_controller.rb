@@ -1,5 +1,5 @@
 class Api::V1::FoodPlacesController < ApplicationController
-  before_action :set_food_place, only: %i[ show update destroy ]
+  before_action :set_food_place, only: %i[ show update destroy toggle_favorite ]
   before_action :require_login, except: %i[ index  ]
 
   def index
@@ -60,6 +60,30 @@ class Api::V1::FoodPlacesController < ApplicationController
 
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Food place not found" }, status: :not_found
+  end
+
+  # Favorite Places
+  def favorites
+    @favorite_places = current_user&.favorite_food_places&.order(created_at: :desc)
+    render json: @favorite_places.as_json, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :internal_server_error
+  end
+
+  def toggle_favorite
+    favorite = current_user&.favorites&.find_by(food_place: @food_place)
+
+    if favorite
+      favorite.destroy
+      render json: { success: true, favorite: false, message: "Removed from favorites" }, status: :ok
+    else
+      current_user&.favorites&.create(food_place: @food_place)
+      render json: { success: true, favorite: true, message: "Added to favorites" }, status: :ok
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Food place not found" }, status: :not_found
+  rescue => e
+    render json: { error: e.message }, status: :internal_server_error
   end
 
   private

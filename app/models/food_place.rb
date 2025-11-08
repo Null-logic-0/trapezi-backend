@@ -5,6 +5,9 @@ class FoodPlace < ApplicationRecord
   has_many_attached :images
   has_one_attached :menu_pdf
 
+  has_many :favorites, dependent: :destroy
+  has_many :favorite_by_users, through: :favorites, source: :user
+
   # Categories
   CATEGORIES = %w[restaurant cafe bar bakery pastry].freeze
 
