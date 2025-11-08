@@ -12,6 +12,8 @@ Rails.application.routes.draw do
       delete "/logout", to: "auth#destroy", as: :logout
       resources :food_places
       get "/my_businesses", to: "food_places#my_businesses", as: :my_businesses
+      get "/favorites", to: "food_places#favorites", as: :favorites
+      post "/favorite/:id", to: "food_places#toggle_favorite", as: :favorite
     end
   end
 end
