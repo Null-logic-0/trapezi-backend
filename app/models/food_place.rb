@@ -7,6 +7,7 @@ class FoodPlace < ApplicationRecord
 
   has_many :favorites, dependent: :destroy
   has_many :favorite_by_users, through: :favorites, source: :user
+  has_many :reviews, dependent: :destroy
 
   # Categories
   CATEGORIES = %w[restaurant cafe bar bakery pastry].freeze

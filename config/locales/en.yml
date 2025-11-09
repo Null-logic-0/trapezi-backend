@@ -70,6 +70,7 @@ en:
               invalid_format: "Menu file must be in PDF format"
               too_large: "Menu file must be less than %{count}MB"
 
+
       errors:
         invalid_credentials: "Email or password is invalid"
         blocked_by_admin: "Your profile has been blocked"
