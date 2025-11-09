@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :food_places, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorite_food_places, through: :favorites, source: :food_place
+  has_many :reviews, dependent: :destroy
 
   has_one_attached :avatar, dependent: :destroy
 
