@@ -69,7 +69,7 @@ class FoodPlace < ApplicationRecord
 
   def as_json(options = {})
     super({
-            methods: [ :images_url, :menu_url, :working_schedule_readable ],
+            methods: [ :images_url, :menu_url, :working_schedule_readable, :average_rating ],
             except: [ :password_digest, :created_at, :updated_at ]
           }.merge(options))
   end
@@ -77,6 +77,11 @@ class FoodPlace < ApplicationRecord
   def menu_url
     return unless menu_pdf.attached?
     Rails.application.routes.url_helpers.url_for(menu_pdf)
+  end
+
+  def average_rating
+    return 0 if reviews.empty?
+    (reviews.sum(:rating).to_f / reviews.size).round(1)
   end
 
   private
