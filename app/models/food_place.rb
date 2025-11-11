@@ -84,6 +84,15 @@ class FoodPlace < ApplicationRecord
     (reviews.sum(:rating).to_f / reviews.size).round(1)
   end
 
+  scope :search, ->(search_term) {
+    if search_term.present?
+      term = "%#{search_term.strip.downcase}%"
+      where("LOWER(business_name) LIKE ? OR LOWER(description) LIKE ?", term, term)
+    else
+      all
+    end
+  }
+
   private
 
   # --- Categories validations ---
