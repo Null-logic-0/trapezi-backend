@@ -4,9 +4,9 @@ class Api::V1::FoodPlacesController < ApplicationController
 
   def index
     @food_places = filtered_places(FoodPlace.all.left_joins(:reviews)
-                                            .group(:id)
+                                            .group("id")
                                             .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
-                                            .order("is_vip DESC,average_rating DESC"))
+                                            .order("is_vip DESC,average_rating DESC").search(params[:search]))
     render json: @food_places.as_json, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
@@ -16,9 +16,9 @@ class Api::V1::FoodPlacesController < ApplicationController
     @food_places = filtered_places(
       FoodPlace.where(is_vip: true)
                .left_joins(:reviews)
-               .group(:id)
+               .group("id")
                .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
-               .order("average_rating DESC")
+               .order("average_rating DESC").search(params[:search])
     )
 
     render json: @food_places.as_json, status: :ok
@@ -27,7 +27,9 @@ class Api::V1::FoodPlacesController < ApplicationController
   end
 
   def my_businesses
-    @food_places = filtered_places(current_user&.food_places&.order(created_at: :desc))
+    @food_places = filtered_places(
+      current_user&.food_places&.order(created_at: :desc)&.search(params[:search])
+    )
     render json: @food_places.as_json, status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
@@ -81,7 +83,9 @@ class Api::V1::FoodPlacesController < ApplicationController
 
   # Favorite Places
   def favorites
-    @favorite_places = filtered_places(current_user&.favorite_food_places&.order(created_at: :desc))
+    @favorite_places = filtered_places(
+      current_user&.favorite_food_places&.order(created_at: :desc)&.search(params[:search])
+    )
     render json: @favorite_places.as_json, status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
@@ -163,6 +167,14 @@ class Api::V1::FoodPlacesController < ApplicationController
       scope = scope.where("categories && ARRAY[?]::varchar[]", categories)
     end
 
+    scope
+  end
+
+  def self.search
+    if params[:search].present?
+      search_term = "%#{params[:search].strip.downcase}%"
+      scope = scope.where("LOWER(business_name) LIKE ?", "%#{search_term}%")
+    end
     scope
   end
 
