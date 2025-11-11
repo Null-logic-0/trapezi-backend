@@ -19,6 +19,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 gem "dotenv-rails", groups: [ :development, :test ]
 gem "aws-sdk-s3"
+gem "kaminari"
 
 gem "rack-cors"
 

@@ -1,36 +1,48 @@
 class Api::V1::FoodPlacesController < ApplicationController
+  include Pagination
   before_action :set_food_place, only: %i[ show update destroy toggle_favorite get_reviews create_review delete_review update_review ]
   before_action :require_login, except: %i[ index get_vip_places  ]
 
   def index
-    @food_places = filtered_places(FoodPlace.all.left_joins(:reviews)
-                                            .group("id")
-                                            .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
-                                            .order("is_vip DESC,average_rating DESC").search(params[:search]))
-    render json: @food_places.as_json, status: :ok
+    scope = filtered_places(
+      FoodPlace
+        .left_joins(:reviews)
+        .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
+        .group("food_places.id")
+        .order("is_vip DESC, average_rating DESC")
+        .search(params[:search])
+    )
+
+    result = paginate(scope)
+
+    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def get_vip_places
-    @food_places = filtered_places(
+    scope = filtered_places(
       FoodPlace.where(is_vip: true)
                .left_joins(:reviews)
-               .group("id")
                .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
+               .group("food_places.id")
                .order("average_rating DESC").search(params[:search])
     )
 
-    render json: @food_places.as_json, status: :ok
+    result = paginate(scope)
+    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def my_businesses
-    @food_places = filtered_places(
+    scope = filtered_places(
       current_user&.food_places&.order(created_at: :desc)&.search(params[:search])
     )
-    render json: @food_places.as_json, status: :ok
+
+    result = paginate(scope)
+    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
+
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
   end
@@ -83,10 +95,11 @@ class Api::V1::FoodPlacesController < ApplicationController
 
   # Favorite Places
   def favorites
-    @favorite_places = filtered_places(
+    scope = filtered_places(
       current_user&.favorite_food_places&.order(created_at: :desc)&.search(params[:search])
     )
-    render json: @favorite_places.as_json, status: :ok
+    result = paginate(scope)
+    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
   end
