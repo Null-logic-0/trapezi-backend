@@ -1,16 +1,33 @@
 class Api::V1::FoodPlacesController < ApplicationController
   before_action :set_food_place, only: %i[ show update destroy toggle_favorite get_reviews create_review delete_review update_review ]
-  before_action :require_login, except: %i[ index  ]
+  before_action :require_login, except: %i[ index get_vip_places  ]
 
   def index
-    @food_places = FoodPlace.all
+    @food_places = filtered_places(FoodPlace.all.left_joins(:reviews)
+                                            .group(:id)
+                                            .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
+                                            .order("is_vip DESC,average_rating DESC"))
+    render json: @food_places.as_json, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def get_vip_places
+    @food_places = filtered_places(
+      FoodPlace.where(is_vip: true)
+               .left_joins(:reviews)
+               .group(:id)
+               .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
+               .order("average_rating DESC")
+    )
+
     render json: @food_places.as_json, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def my_businesses
-    @food_places = current_user&.food_places&.order(created_at: :desc)
+    @food_places = filtered_places(current_user&.food_places&.order(created_at: :desc))
     render json: @food_places.as_json, status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
@@ -64,7 +81,7 @@ class Api::V1::FoodPlacesController < ApplicationController
 
   # Favorite Places
   def favorites
-    @favorite_places = current_user&.favorite_food_places&.order(created_at: :desc)
+    @favorite_places = filtered_places(current_user&.favorite_food_places&.order(created_at: :desc))
     render json: @favorite_places.as_json, status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
@@ -139,6 +156,15 @@ class Api::V1::FoodPlacesController < ApplicationController
   end
 
   private
+
+  def filtered_places(scope)
+    if params[:categories].present?
+      categories = params[:categories].split(",").map(&:strip).map(&:downcase)
+      scope = scope.where("categories && ARRAY[?]::varchar[]", categories)
+    end
+
+    scope
+  end
 
   def set_food_place
     id_param = params[:id] || params[:place_id]
