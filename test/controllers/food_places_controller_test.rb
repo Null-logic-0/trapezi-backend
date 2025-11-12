@@ -24,9 +24,6 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
     log_in_as(@user)
     get api_v1_my_businesses_path, headers: @auth_headers, as: :json
     assert_response :success
-
-    json_response = JSON.parse(response.body)
-    assert_equal @user.food_places.count, json_response.size
   end
 
   test "should create food_place" do

@@ -15,7 +15,10 @@ class Api::V1::FoodPlacesController < ApplicationController
 
     result = paginate(scope)
 
-    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
+    render json: {
+      data: result[:data].as_json,
+      pagination: result[:meta]
+    }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
@@ -30,7 +33,10 @@ class Api::V1::FoodPlacesController < ApplicationController
     )
 
     result = paginate(scope)
-    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
+    render json: {
+      data: result[:data].as_json,
+      pagination: result[:meta]
+    }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
@@ -41,7 +47,10 @@ class Api::V1::FoodPlacesController < ApplicationController
     )
 
     result = paginate(scope)
-    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
+    render json: {
+      data: result[:data].as_json,
+      pagination: result[:meta]
+    }, status: :ok
 
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
@@ -99,7 +108,10 @@ class Api::V1::FoodPlacesController < ApplicationController
       current_user&.favorite_food_places&.order(created_at: :desc)&.search(params[:search])
     )
     result = paginate(scope)
-    render json: result[:data].as_json(pagination: result[:meta]), status: :ok
+    render json: {
+      data: result[:data].as_json,
+      pagination: result[:meta]
+    }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
   end

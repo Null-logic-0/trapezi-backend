@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       get "/my_businesses", to: "food_places#my_businesses", as: :my_businesses
       get "/favorites", to: "food_places#favorites", as: :favorites
       get "/vip_places", to: "food_places#get_vip_places", as: :vip_places
+      get "/search_places", to: "food_places#search_places", as: :search_places
       post "/favorite/:id", to: "food_places#toggle_favorite", as: :favorite
 
       get "reviews/:id", to: "food_places#get_reviews", as: :reviews
