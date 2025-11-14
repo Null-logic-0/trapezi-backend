@@ -40,4 +40,18 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
     assert_equal "Unauthorized", JSON.parse(response.body)["error"]
   end
+
+  test "should send email for password reset" do
+    post api_v1_password_reset_request_path, params: { email: @user.email }
+    assert_response :success
+  end
+
+  test "should reset password" do
+    post api_v1_password_reset_path, params: {
+      token: @user.generate_password_reset_token!,
+      password: "newPassword1234",
+      password_confirmation: "newPassword1234"
+    }
+    assert_response :success
+  end
 end

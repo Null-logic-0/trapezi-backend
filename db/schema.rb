@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_09_090558) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_14_074809) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -101,6 +101,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_090558) do
     t.boolean "is_blocked", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "password_reset_token"
+    t.datetime "password_reset_sent_at"
+    t.string "google_uid"
+    t.index ["password_reset_token"], name: "index_users_on_password_reset_token"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

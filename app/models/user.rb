@@ -39,6 +39,26 @@ class User < ApplicationRecord
           }.merge(options || {}))
   end
 
+  def generate_password_reset_token!
+    raw_token = SecureRandom.urlsafe_base64(32)
+
+    update!(
+      password_reset_token: raw_token,
+      password_reset_sent_at: Time.current,
+    )
+
+    signed_token_for(raw_token)
+  end
+
+  def clear_password_reset_token!
+    update!(password_reset_token: nil, password_reset_sent_at: nil)
+  end
+
+  def password_reset_token_valid?(expiry = 10.minutes)
+    return false if password_reset_sent_at.nil?
+    password_reset_sent_at > Time.current - expiry
+  end
+
   private
 
   def password_required?
@@ -62,5 +82,13 @@ class User < ApplicationRecord
     self.email = email&.downcase&.strip if email.present?
     self.name = name&.strip&.capitalize if name.present?
     self.last_name = last_name&.strip&.capitalize if last_name.present?
+  end
+
+  def signed_token_for(raw_token)
+    verifier.generate(raw_token)
+  end
+
+  def verifier
+    ActiveSupport::MessageVerifier.new(Rails.application.secret_key_base, digest: "SHA256")
   end
 end

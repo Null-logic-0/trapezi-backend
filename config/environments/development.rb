@@ -22,11 +22,23 @@ Rails.application.configure do
 
   config.active_storage.service = :local
 
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    user_name: Rails.application.credentials.dig(:mailtrap, :username),
+    password: Rails.application.credentials.dig(:mailtrap, :password),
+    address: "smtp.mailtrap.io",
+    domain: "localhost",
+    port: 587,
+    authentication: :plain,
+    enable_starttls_auto: true,
+    openssl_verify_mode: "none" # <--- ignore SSL cert errors
+  }
+
+  config.active_job.queue_adapter = :async
 
   config.active_support.deprecation = :log
 

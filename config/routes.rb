@@ -10,6 +10,9 @@ Rails.application.routes.draw do
       patch "/update_password", to: "users#update_password", as: :update_password
       delete "/delete_profile", to: "users#delete_profile", as: :delete_profile
       delete "/logout", to: "auth#destroy", as: :logout
+      post "/password_reset_request", to: "auth#password_reset_request", as: :password_reset_request
+      post "/password_reset", to: "auth#password_reset", as: :password_reset
+
       resources :food_places
       get "/my_businesses", to: "food_places#my_businesses", as: :my_businesses
       get "/favorites", to: "food_places#favorites", as: :favorites
