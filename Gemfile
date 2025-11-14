@@ -21,6 +21,7 @@ gem "dotenv-rails", groups: [ :development, :test ]
 gem "aws-sdk-s3"
 gem "kaminari"
 
+gem "resend"
 gem "rack-cors"
 
 group :development, :test do

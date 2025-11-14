@@ -131,6 +131,10 @@ GEM
       activesupport (>= 6.1)
     google-id-token (1.4.2)
       jwt (>= 1)
+    httparty (0.23.2)
+      csv
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-console (0.8.1)
@@ -185,6 +189,8 @@ GEM
     mini_portile2 (2.8.9)
     minitest (5.26.0)
     msgpack (1.8.0)
+    multi_xml (0.7.2)
+      bigdecimal (~> 3.1)
     net-imap (0.5.12)
       date
       net-protocol
@@ -284,6 +290,8 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
+    resend (1.0.0)
+      httparty (>= 0.21.0)
     rubocop (1.81.6)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -382,6 +390,7 @@ DEPENDENCIES
   rails (~> 8.0.3)
   rails-controller-testing
   redis
+  resend
   rubocop-rails-omakase
   solid_cable
   solid_cache

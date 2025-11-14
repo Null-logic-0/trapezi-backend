@@ -37,6 +37,14 @@ Rails.application.configure do
     enable_starttls_auto: true,
     openssl_verify_mode: "none" # <--- ignore SSL cert errors
   }
+  #
+  # config.action_mailer.smtp_settings = {
+  #   user_name: "resend",
+  #   password: Rails.application.credentials.dig(:resend, :api_key),
+  #   address: "resend.com",
+  #   port: 587,
+  #   authentication: :plain
+  # }
 
   config.active_job.queue_adapter = :async
 

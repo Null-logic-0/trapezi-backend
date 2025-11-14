@@ -94,6 +94,11 @@ class Api::V1::AuthController < ApplicationController
 
   def password_reset_request
     user = User.find_by(email: params[:email].to_s.downcase)
+
+    if params[:email].blank?
+      return render json: { error: I18n.t("activerecord.errors.models.user.attributes.email.blank") }, status: :bad_request
+    end
+
     message = { message: I18n.t("mailer.reset_password.instruction_sent") }
 
     if user
@@ -106,7 +111,15 @@ class Api::V1::AuthController < ApplicationController
       end
 
       signed_token = user.generate_password_reset_token!
-      PasswordMailer.with(user: user, token: signed_token).reset_email.deliver_now
+
+      if Rails.env.production?
+        # Use Resend API in production
+        ResendPasswordMailer.reset_email(user: user, token: signed_token)
+      else
+        # Use Rails mailer in dev/test
+        PasswordMailer.with(user: user, token: signed_token).reset_email.deliver_now
+      end
+
     end
 
     render json: message, status: :ok
@@ -116,13 +129,13 @@ class Api::V1::AuthController < ApplicationController
     begin
       raw_token = ActiveSupport::MessageVerifier.new(Rails.application.secret_key_base, digest: "SHA256").verify(params[:token])
     rescue ActiveSupport::MessageVerifier::InvalidSignature
-      return render json: { error: "Invalid token." }, status: :unprocessable_entity
+      return render json: { error: I18n.t("activerecord.errors.errors.invalid_token") }, status: :unprocessable_entity
     end
 
     user = User.find_by(password_reset_token: raw_token)
 
     if user.nil? || !user.password_reset_token_valid?(10.minute)
-      return render json: { error: I18n.t("activerecord.errors.errors.invalid_token") }, status: :unprocessable_entity
+      return render json: { error: I18n.t("activerecord.errors.errors.invalid_or_expired_token") }, status: :unprocessable_entity
     end
 
     if user.update(password: params[:password], password_confirmation: params[:password_confirmation])
