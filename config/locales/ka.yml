@@ -3,11 +3,11 @@ ka:
     internal: "განცხადება ვერ შესრულდა"
     unauthorized: "თქვენ არ გაქვთ დაშვება"
     invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"
-
+  messages:
+    password_updated: "პაროლი წარმატებით განახლდა."
   activerecord:
     errors:
       models:
-
         user:
           attributes:
             name:
@@ -74,3 +74,18 @@ ka:
       errors:
         invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"
         blocked_by_admin: "პროფილი დაბლოკილია!"
+        invalid_token: "არასწორი ბმული."
+        invalid_or_expired_token: "ბმული არასწორია ან ვადა გაუვიდა."
+        google_user_cannot_reset: "Google ანგარიშის მომხმარებლებს არ შეუძლიათ პაროლის აღდგენა ელ.ფოსტით."
+
+  mailer:
+    reset_password:
+      subject: "პაროლის განახლება"
+      greeting: "გამარჯობა %{name},"
+      intro: "ჩვენ მივიღეთ მოთხოვნა თქვენი პაროლის განახლებისთვის. დააჭირეთ ქვემოთ მოცემულ ღილაკს ახალი პაროლის დასაყენებლად."
+      button: "პაროლის განახლება"
+      expire: "ბმულს 10 წუთში გაუვა ვადა."
+      help: "დაჭირვების შემთხვევაში დაგვიკავშირდით"
+      instruction_sent: "თუ თქვენი ელ.ფოსტა არსებობს, მიიღებთ პაროლის აღდგენის ინსტრუქციას."
+
+

@@ -3,7 +3,8 @@ en:
     internal: "Request failed"
     unauthorized: "You are not authorized"
     invalid_credentials: "Email or password is invalid"
-
+  messages:
+    password_updated: "Password successfully updated."
   activerecord:
     errors:
       models:
@@ -74,3 +75,20 @@ en:
       errors:
         invalid_credentials: "Email or password is invalid"
         blocked_by_admin: "Your profile has been blocked"
+        google_user_cannot_reset: "Google account users cannot reset password via email."
+        invalid_token: "Invalid token."
+        invalid_or_expired_token: "Invalid or expired token."
+
+  mailer:
+    reset_password:
+      subject: "Reset Your Password"
+      greeting: "Hi %{name},"
+      intro: "We received a request to reset your password. Click the button below to set a new password."
+      button: "Reset Password"
+      expire: "This link will expire in 10 min."
+      help: "Need help? Contact us at"
+      instruction_sent: "If your email exists, you will receive reset instructions."
+
+
+
+

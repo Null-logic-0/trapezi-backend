@@ -53,6 +53,11 @@ class Api::V1::UsersController < ApplicationController
     unless @user&.authenticate(password_params[:current_password])
       return render json: { success: false, errors: { current_password: I18n.t("activerecord.errors.models.user.attributes.current_password.invalid") } }, status: :unauthorized
     end
+
+    if @user&.google_uid.present?
+      return render json: { error: I18n.t("activerecord.errors.errors.google_user_cannot_reset") }, status: :forbidden
+    end
+
     if @user&.authenticate(password_params[:current_password])
       if @user&.update(password_params.slice(:password, :password_confirmation))
         render json: @user.as_json, status: :ok

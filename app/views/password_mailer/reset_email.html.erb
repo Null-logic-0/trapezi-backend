@@ -1,0 +1,41 @@
+<body style="background-color: #F5F5F5; font-family: Arial, sans-serif; padding: 40px 0;">
+<div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
+
+  <!-- Logo -->
+  <div style="background-color: #FF6B35; padding: 32px; text-align: center;">
+    <h1 style="color: #ffffff; font-size: 32px; margin: 0;">TRAPEZI</h1>
+  </div>
+
+  <!-- Content -->
+  <div style="padding: 48px;">
+    <h2 style="color: #2A2D34; font-size: 28px;">
+      <%= t('mailer.reset_password.subject') %>
+    </h2>
+
+    <p style="color: #1A1A1A;">
+      <%= t('mailer.reset_password.greeting', name: @user.name || @user.email) %>
+    </p>
+
+    <p style="color: #1A1A1A;">
+      <%= t('mailer.reset_password.intro') %>
+    </p>
+
+    <p style="text-align: center;">
+      <a href="<%= @reset_link %>" style="display: inline-block; padding: 14px 40px; border-radius: 6px; background-color: #FF6B35; color: #ffffff; text-decoration: none; font-weight: 600;">
+        <%= t('mailer.reset_password.button') %>
+      </a>
+    </p>
+
+    <p style="color: #1A1A1A;">
+      <%= t('mailer.reset_password.expire') %>
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div style="padding: 32px; text-align: center; color: #2A2D34; font-size: 14px;">
+    <%= t('mailer.reset_password.help') %>
+    <a href="mailto:support@trapezi.ge" style="color: #FFD166; text-decoration: underline;">support@trapezi.com</a>
+  </div>
+
+</div>
+</body>
