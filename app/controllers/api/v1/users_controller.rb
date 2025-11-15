@@ -78,7 +78,7 @@ class Api::V1::UsersController < ApplicationController
       WelcomeMailer.with(user: user).welcome.deliver_now
     end
 
-    render json: { user: user, token: jwt }, status: :created
+    render json: { user: user, token: jwt, message: I18n.t("mailer.welcome.title") }, status: :created
   end
 
   def update_profile

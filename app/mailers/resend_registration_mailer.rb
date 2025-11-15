@@ -5,7 +5,7 @@ class ResendRegistrationMailer
 
   def self.register(user:, token:)
     frontend_url = ENV["FRONTEND_URL"]
-    url = "#{frontend_url}/confirm_registration?token=#{token}"
+    url = "#{frontend_url}/signup/confirm?token=#{token}"
 
     html_content = ApplicationController.renderer.render(
       template: "registration_mailer/register",

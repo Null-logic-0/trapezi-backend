@@ -4,7 +4,7 @@ class RegistrationMailer < ApplicationMailer
     @token = params[:token]
 
     frontend_url = ENV["FRONTEND_URL"]
-    @url = "#{frontend_url}/confirm_registration?token=#{@token}"
+    @url = "#{frontend_url}/signup/confirm?token=#{@token}"
 
     mail(
       to: @user.email,
