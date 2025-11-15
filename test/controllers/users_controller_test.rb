@@ -36,6 +36,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
       }, as: :json
     end
 
+    assert_response :success
+  end
+
+  test "should confirm user creation" do
+    post api_v1_confirm_path, params: {
+      token: @user.generate_confirmation_token!,
+      confirmed: true
+    }
     assert_response :created
   end
 

@@ -8,8 +8,8 @@ class PasswordMailer < ApplicationMailer
 
     mail(
       to: @user.email,
-      subject: "Reset your password",
-      from: "no-reply"
+      subject: I18n.t("mailer.reset_password.subject"),
+      from: "no-reply@trapezi.ge"
     )
   end
 end

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users
       post "/signup", to: "users#create", as: :signup
+      post "/confirm", to: "users#confirm", as: :confirm
       post "/login", to: "auth#create", as: :login
       post "/google_oauth", to: "auth#google_oauth", as: :google_oauth
       get "/profile", to: "users#profile", as: :profile

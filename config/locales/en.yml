@@ -81,6 +81,23 @@ en:
         invalid_or_expired_token: "Invalid or expired token."
 
   mailer:
+    welcome:
+      title: "Welcome to Trapezi!"
+      greeting: "Hi %{name},"
+      intro: "We're excited to have you join Trapezi! Your account has been successfully created with %{email}."
+      description: "Trapezi is your go-to platform for discovering amazing local businesses. Whether you're looking for restaurants, cafes, bars, or bakeries, we've got you covered."
+      button: "Start Exploring"
+      closing: "Ready to explore? Click the button above to discover the best local spots in your area."
+      help: "Need help? Contact us at"
+      copyright: "© %{year} Trapezi. All rights reserved."
+    confirm_email:
+      sent: "Confirmation email sent!"
+      confirmation_subject: "Email confirmation instructions"
+      subject: "Confirm your email"
+      greeting: "Hello %{name},"
+      intro: "Please confirm your email to complete your registration."
+      button: "Confirm Email"
+      help: "If you didn’t create an account, please ignore this email. Need help?"
     reset_password:
       subject: "Reset Your Password"
       greeting: "Hi %{name},"

@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   before_action :set_user, only: %i[ show destroy update ]
-  before_action :require_login, except: %i[ create ]
+  before_action :require_login, except: %i[ create confirm ]
   before_action :admin?, only: %i[ index destroy update ]
   before_action :blocked?, except: %i[ index destroy update create ]
 
@@ -18,18 +18,67 @@ class Api::V1::UsersController < ApplicationController
     render json: @user.as_json, status: :ok
   end
 
+  # def create
+  #   @user = User.new(user_params)
+  #
+  #   if @user&.save
+  #     token = encode_token({ user_id: @user.id })
+  #     render json: {
+  #       user: @user.as_json(except: [ :password_digest ]),
+  #       token: token
+  #     }, status: :created
+  #   else
+  #     render json: { success: false, errors: formatted_errors(@user) }, status: :unprocessable_entity
+  #   end
+  # end
+
   def create
     @user = User.new(user_params)
+    @user&.confirmed = false
 
-    if @user&.save
-      token = encode_token({ user_id: @user.id })
-      render json: {
-        user: @user.as_json(except: [ :password_digest ]),
-        token: token
-      }, status: :created
-    else
-      render json: { success: false, errors: formatted_errors(@user) }, status: :unprocessable_entity
+    unless @user&.save
+      return render json: { success: false, errors: formatted_errors(@user) }, status: :unprocessable_entity
     end
+
+    token = @user.generate_confirmation_token!
+
+    if Rails.env.production?
+      # Use Resend API in production
+      ResendRegistrationMailer.register(user: @user, token: token)
+    else
+      # Use Rails mailer in dev/test
+      RegistrationMailer.with(user: @user, token: token).register.deliver_now
+    end
+
+    DeleteUnconfirmedUserJob.set(wait: 15.minutes).perform_later(@user.id)
+
+    render json: { success: true, message: I18n.t("mailer.confirm_email.sent") }
+  end
+
+  def confirm
+    user = User.find_by(confirmation_token: params[:token])
+
+    unless user
+      return render json: { error: I18n.t("activerecord.errors.errors.invalid_token") },
+                    status: :unprocessable_entity
+    end
+
+    if user.nil? || !user.confirmation_token_valid?(15.minutes)
+      return render json: { error: I18n.t("activerecord.errors.errors.invalid_or_expired_token") }, status: :unprocessable_entity
+    end
+
+    user.update!(confirmed: true, confirmation_token: nil, confirmation_sent_at: nil)
+    jwt = encode_token({ user_id: user.id })
+
+    if Rails.env.production?
+      # Use Resend API in production
+      ResendWelcomeMailer.welcome(user: user)
+      # Use Rails mailer in dev/test
+    else
+      WelcomeMailer.with(user: user).welcome.deliver_now
+    end
+
+    render json: { user: user, token: jwt }, status: :created
   end
 
   def update_profile
