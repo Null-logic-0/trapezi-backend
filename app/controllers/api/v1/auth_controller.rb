@@ -29,11 +29,12 @@ class Api::V1::AuthController < ApplicationController
 
     begin
       validator = GoogleIDToken::Validator.new
+      google_client_id = Rails.application.credentials.dig(:google, :client_id)
 
       payload = if Rails.env.development?
-                  validator.check_with_ssl_disabled(credential, ENV["GOOGLE_CLIENT_ID"])
+                  validator.check_with_ssl_disabled(credential, google_client_id)
       else
-                  validator.check(credential, ENV["GOOGLE_CLIENT_ID"])
+                  validator.check(credential, google_client_id)
       end
 
       email = payload["email"]
