@@ -1,12 +1,21 @@
 class Api::V1::UsersController < ApplicationController
+  include Pagination
+
   before_action :set_user, only: %i[ show destroy update ]
   before_action :require_login, except: %i[ create confirm ]
   before_action :admin?, only: %i[ index destroy update ]
   before_action :blocked?, except: %i[ index destroy update create ]
 
   def index
-    @users = User.order(created_at: :desc)
-    render json: @users.as_json, status: :ok
+    @users = User.where.not(id: current_user&.id)
+                 .order(created_at: :desc)
+                 .search(params[:search])
+    result = paginate(@users)
+
+    render json: {
+      data: result[:data].as_json,
+      pagination: result[:meta]
+    }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
   end

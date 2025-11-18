@@ -7,6 +7,7 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
     @food_place = food_places(:one)
     @review = reviews(:one)
     @user = users(:one)
+    @admin = users(:admin)
   end
 
   test "should get index" do
@@ -118,5 +119,17 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Review deleted successfully", json_response["message"]
     assert_raises(ActiveRecord::RecordNotFound) { @review.reload }
     assert_response :ok
+  end
+
+  test "should delete food places by admin" do
+    log_in_as(@admin)
+    delete api_v1_destroy_by_admin_path(@food_place), headers: @auth_headers, as: :json
+    assert_response :success
+  end
+
+  test "should get all food_places by admin" do
+    log_in_as(@admin)
+    get api_v1_all_places_path, headers: @auth_headers, as: :json
+    assert_response :success
   end
 end

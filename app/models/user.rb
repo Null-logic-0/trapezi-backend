@@ -76,6 +76,15 @@ class User < ApplicationRecord
     confirmation_sent_at > Time.current - expiry
   end
 
+  scope :search, ->(search_term) {
+    if search_term.present?
+      term = "%#{search_term.strip.downcase}%"
+      where("LOWER(name) LIKE ? OR LOWER(last_name) LIKE ? OR LOWER(email) LIKE ?", term, term, term)
+    else
+      all
+    end
+  }
+
   private
 
   def password_required?

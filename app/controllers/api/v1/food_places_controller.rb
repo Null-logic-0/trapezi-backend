@@ -1,7 +1,8 @@
 class Api::V1::FoodPlacesController < ApplicationController
   include Pagination
-  before_action :set_food_place, only: %i[ show update destroy toggle_favorite get_reviews create_review delete_review update_review ]
+  before_action :set_food_place, only: %i[ show update destroy toggle_favorite get_reviews create_review delete_review update_review destroy_by_admin ]
   before_action :require_login, except: %i[ index get_vip_places  ]
+  before_action :admin?, only: %i[destroy_by_admin get_places_for_admin ]
 
   def index
     scope = filtered_places(
@@ -182,6 +183,46 @@ class Api::V1::FoodPlacesController < ApplicationController
     render json: { success: true, message: "Review deleted successfully" }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
+  end
+
+  # Admin
+
+  def destroy_by_admin
+    unless current_user
+      render json: { success: false, error: "Not authorized" }, status: :forbidden
+      return
+    end
+
+    if @food_place
+      @food_place.destroy
+      render json: { success: true, message: "Deleted successfully" }, status: :ok
+    else
+      render json: { success: false, error: "Food place not found" }, status: :not_found
+    end
+  end
+
+  def get_places_for_admin
+    @food_places = FoodPlace.all.order(created_at: :desc).search(params[:search])
+    result = paginate(@food_places)
+
+    render json: {
+      data: result[:data].map do |food_place|
+        {
+          id: food_place.id,
+          business_name: food_place.business_name,
+          images: food_place.images_url,
+          categories: food_place.categories,
+          user: {
+            name: food_place.user&.name,
+            last_name: food_place.user&.last_name,
+            avatar_url: food_place.user&.avatar_url
+          }
+        }
+      end,
+      pagination: result[:meta]
+    }, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private
