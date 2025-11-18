@@ -25,6 +25,8 @@ Rails.application.routes.draw do
       post "reviews/:id", to: "food_places#create_review", as: :create_review
       patch "reviews/:place_id/:review_id", to: "food_places#update_review", as: :update_review
       delete "reviews/:place_id/:review_id", to: "food_places#delete_review", as: :delete_review
+
+      resources :blogs
     end
   end
 end

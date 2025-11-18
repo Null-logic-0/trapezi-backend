@@ -8,6 +8,16 @@ ka:
   activerecord:
     errors:
       models:
+        blog:
+          title:
+            blank: "სათაური სავალდებულოა"
+          content:
+            blank: "კონტენტი სავალდებულოა"
+            too_long: "კონტენტის ზომა არ უნდა აღემატებოდეს 500 სიმბოლოს"
+          image:
+            blank: "სურათი სავალდებულოა"
+            too_large: "სურათის ზომა არ უნდა აღემოატებოდეს 12MB-ს."
+            invalid_format: "სურათი უნდა იყოს png, jpg ან jpeg ფორმატში"
         user:
           attributes:
             name:

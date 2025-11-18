@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_15_085126) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_18_081802) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_15_085126) do
     t.index ["token"], name: "index_blacklisted_tokens_on_token"
   end
 
+  create_table "blogs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title"
+    t.string "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_blogs_on_user_id"
+  end
+
   create_table "favorites", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "food_place_id", null: false
@@ -76,7 +85,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_15_085126) do
     t.boolean "is_vip", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "vip_expires_at"
     t.index ["user_id"], name: "index_food_places_on_user_id"
+    t.index ["vip_expires_at"], name: "index_food_places_on_vip_expires_at"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "food_place_id", null: false
+    t.string "pay_id"
+    t.string "status"
+    t.integer "amount_cents"
+    t.string "currency"
+    t.string "duration_key"
+    t.jsonb "meta"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["food_place_id"], name: "index_payments_on_food_place_id"
+    t.index ["pay_id"], name: "index_payments_on_pay_id"
+    t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -113,9 +140,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_15_085126) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "blogs", "users"
   add_foreign_key "favorites", "food_places"
   add_foreign_key "favorites", "users"
   add_foreign_key "food_places", "users"
+  add_foreign_key "payments", "food_places"
+  add_foreign_key "payments", "users"
   add_foreign_key "reviews", "food_places"
   add_foreign_key "reviews", "users"
 end

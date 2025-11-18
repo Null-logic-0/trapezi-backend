@@ -8,7 +8,16 @@ en:
   activerecord:
     errors:
       models:
-
+        blog:
+          title:
+            blank: "Title is required"
+          content:
+            blank: "Content is required"
+            too_long: "Content is too long maximum 500 characters."
+          image:
+            blank: "Image is requried"
+            too_large: "Image must be less than 12MB"
+            invalid_format: "Image must be in png, jpg, or jpeg format"
         user:
           attributes:
             name:

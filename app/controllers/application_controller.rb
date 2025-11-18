@@ -3,6 +3,7 @@ class ApplicationController < ActionController::API
 
   before_action :set_locale
   before_action :require_login
+
   helper_method :current_user, :encode_token, :decode_token, :formatted_errors
 
   private
@@ -65,6 +66,12 @@ class ApplicationController < ActionController::API
   def admin?
     unless current_user&.is_admin?
       render json: { error: "Admins only" }, status: :forbidden
+    end
+  end
+
+  def moderator?
+    unless current_user&.is_admin? || current_user&.moderator?
+      render json: { error: "Admins or moderators only" }, status: :forbidden
     end
   end
 
