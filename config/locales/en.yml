@@ -11,9 +11,10 @@ en:
         blog:
           title:
             blank: "Title is required"
+            too_long: "Title is too long"
           content:
             blank: "Content is required"
-            too_long: "Content is too long maximum 500 characters."
+            too_long: "Content is too long maximum 5000 characters."
           image:
             blank: "Image is requried"
             too_large: "Image must be less than 12MB"

@@ -2,11 +2,12 @@ class Blog < ApplicationRecord
   belongs_to :user
   has_one_attached :image, dependent: :destroy
 
-  validates :title, presence: { message: I18n.t("activerecord.errors.models.blog.title.blank") }
+  validates :title,
+            length: { maximum: 50, message: I18n.t("activerecord.errors.models.blog.title.too_long") },
+            presence: { message: I18n.t("activerecord.errors.models.blog.title.blank") }
   validates :content,
             length: {
-              maximum: 500,
-              allow_nil: true,
+              maximum: 5000,
               message: I18n.t("activerecord.errors.models.blog.content.too_long") },
             presence: { message: I18n.t("activerecord.errors.models.blog.content.blank") }
 
@@ -19,9 +20,15 @@ class Blog < ApplicationRecord
 
   def as_json(options = {})
     super({
-            methods: [ :image_url ],
+            methods: [ :image_url, :formatted_content ],
             except: [ :password_digest ]
           }.merge(options))
+  end
+
+  def formatted_content
+    return [] unless content.present?
+
+    content&.scan(/.{1,900}(?:\s|$)/).map(&:strip)
   end
 
   private

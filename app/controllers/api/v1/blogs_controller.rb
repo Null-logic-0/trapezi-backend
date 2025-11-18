@@ -17,7 +17,10 @@ class Api::V1::BlogsController < ApplicationController
   end
 
   def show
-    render json: @blog.as_json, status: :ok
+    render json: @blog.as_json(
+      except: [ :content ]
+
+    ), status: :ok
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
   end
