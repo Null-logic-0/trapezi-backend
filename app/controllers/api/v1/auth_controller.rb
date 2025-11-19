@@ -20,6 +20,21 @@ class Api::V1::AuthController < ApplicationController
     end
   end
 
+  def login_as_admin
+    @user = User.find_by(email: params[:email])
+
+    if @user&.authenticate(params[:password])
+      if @user&.is_admin? || @user&.moderator?
+        token = encode_token({ user_id: @user&.id })
+        render json: { token: token, user: @user }, status: :ok
+      else
+        render json: { error: I18n.t("errors.not_admin") }, status: :forbidden
+      end
+    else
+      render json: { error: I18n.t("errors.invalid_credentials") }, status: :unauthorized
+    end
+  end
+
   def google_oauth
     credential = params[:credential]
 

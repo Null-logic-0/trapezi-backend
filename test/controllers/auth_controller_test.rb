@@ -3,6 +3,7 @@ require "test_helper"
 class AuthControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = users(:one)
+    @admin = users(:admin)
     @password = "password1234"
   end
 
@@ -53,5 +54,15 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
       password_confirmation: "newPassword1234"
     }
     assert_response :success
+  end
+
+  test "should login as admin" do
+    post api_v1_login_as_admin_path, params: { email: @admin.email, password: @password }, as: :json
+    assert_response :success
+  end
+
+  test "should fail login as admin" do
+    post api_v1_login_as_admin_path, params: { email: @user.email, password: @password }, as: :json
+    assert_response :forbidden
   end
 end

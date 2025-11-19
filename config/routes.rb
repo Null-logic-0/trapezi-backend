@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       post "/signup", to: "users#create", as: :signup
       post "/confirm", to: "users#confirm", as: :confirm
       post "/login", to: "auth#create", as: :login
+      post "/login_as_admin", to: "auth#login_as_admin", as: :login_as_admin
       post "/google_oauth", to: "auth#google_oauth", as: :google_oauth
       get "/profile", to: "users#profile", as: :profile
       patch "/update_profile", to: "users#update_profile", as: :update_profile
