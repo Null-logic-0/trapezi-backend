@@ -7,10 +7,11 @@ class Api::V1::UsersController < ApplicationController
   before_action :blocked?, except: %i[ index destroy update create ]
 
   def index
-    @users = User.where.not(id: current_user&.id)
-                 .order(created_at: :desc)
-                 .search(params[:search])
-    result = paginate(@users)
+    scope = filtered_users(User.where.not(id: current_user&.id)
+                               .order(created_at: :desc)
+                               .search(params[:search]))
+
+    result = paginate(scope)
 
     render json: {
       data: result[:data].as_json,
@@ -82,7 +83,7 @@ class Api::V1::UsersController < ApplicationController
     if Rails.env.production?
       # Use Resend API in production
       ResendWelcomeMailer.welcome(user: user)
-      # Use Rails mailer in dev/test
+    # Use Rails mailer in dev/test
     else
       WelcomeMailer.with(user: user).welcome.deliver_now
     end
@@ -154,6 +155,30 @@ class Api::V1::UsersController < ApplicationController
 
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def filtered_users(scope)
+    # Role filter
+    if params[:role].present?
+      scope = case params[:role].downcase
+      when "admin" then scope.admin
+      when "moderator" then scope.moderator
+      when "owner" then scope.owner
+      when "user" then scope.user
+      else scope
+      end
+    end
+
+    # Status filter
+    if params[:status].present?
+      scope = case params[:status].downcase
+      when "blocked" then scope.blocked
+      when "active" then scope.active
+      else scope
+      end
+    end
+
+    scope
   end
 
   def admin_params
