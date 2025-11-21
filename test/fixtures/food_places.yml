@@ -21,6 +21,8 @@ one:
   facebook: MyString
   instagram: MyString
   tiktok: MyString
+  phone: 557525089
+
 
 two:
   user: two

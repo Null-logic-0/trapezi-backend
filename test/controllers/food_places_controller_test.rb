@@ -132,4 +132,13 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_all_places_path, headers: @auth_headers, as: :json
     assert_response :success
   end
+
+  test "should update vip by admin" do
+    log_in_as(@admin)
+    @food_place = FoodPlace.find_by(business_name: "Trapez Cafe")
+    patch api_v1_update_vip_path(@food_place), params: {
+      is_vip: true
+    }, headers: @auth_headers, as: :json
+    assert_response :success
+  end
 end

@@ -23,7 +23,7 @@ class FoodPlace < ApplicationRecord
   validate :validate_categories_inclusion
   validate :validate_working_schedule_format
   validate :validate_images
-  validate :validate_menu_pdf
+  validate :validate_menu_pdf, on: :create
 
   # --- Phone validation ---
   VALID_PHONE_REGEX = /\A(\+995)?5?\d{9}\z/
@@ -83,6 +83,9 @@ class FoodPlace < ApplicationRecord
     return 0 if reviews.empty?
     (reviews.sum(:rating).to_f / reviews.size).round(1)
   end
+
+  scope :vip, -> { where(is_vip: true) }
+  scope :free, -> { where(is_vip: false) }
 
   scope :search, ->(search_term) {
     if search_term.present?

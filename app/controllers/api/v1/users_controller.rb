@@ -182,7 +182,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def admin_params
-    params.permit(:moderator, :is_admin, :is_blocked, :business_owner)
+    params.permit(:moderator, :is_admin, :is_blocked)
   end
 
   def password_params

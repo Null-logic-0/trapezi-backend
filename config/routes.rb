@@ -22,12 +22,13 @@ Rails.application.routes.draw do
       get "/search_places", to: "food_places#search_places", as: :search_places
       get "/all_places", to: "food_places#get_places_for_admin", as: :all_places
       post "/favorite/:id", to: "food_places#toggle_favorite", as: :favorite
+      patch "/update_vip/:id", to: "food_places#update_by_admin", as: :update_vip
 
       get "reviews/:id", to: "food_places#get_reviews", as: :reviews
       post "reviews/:id", to: "food_places#create_review", as: :create_review
       patch "reviews/:place_id/:review_id", to: "food_places#update_review", as: :update_review
       delete "reviews/:place_id/:review_id", to: "food_places#delete_review", as: :delete_review
-      delete "user_food_places/:id", to: "food_places#destroy_by_admin", as: :destroy_by_admin
+      delete "delete_by_admin/:id", to: "food_places#destroy_by_admin", as: :destroy_by_admin
 
       resources :blogs
     end

@@ -1,8 +1,8 @@
 class Api::V1::FoodPlacesController < ApplicationController
   include Pagination
-  before_action :set_food_place, only: %i[ show update destroy toggle_favorite get_reviews create_review delete_review update_review destroy_by_admin ]
+  before_action :set_food_place, only: %i[ show update destroy toggle_favorite get_reviews create_review delete_review update_review destroy_by_admin update_by_admin ]
   before_action :require_login, except: %i[ index get_vip_places  ]
-  before_action :admin?, only: %i[destroy_by_admin get_places_for_admin ]
+  before_action :admin?, only: %i[destroy_by_admin get_places_for_admin update_by_admin ]
 
   def index
     scope = filtered_places(
@@ -201,9 +201,22 @@ class Api::V1::FoodPlacesController < ApplicationController
     end
   end
 
+  def update_by_admin
+    unless current_user
+      render json: { success: false, error: "Not authorized" }, status: :forbidden
+      return
+    end
+
+    if @food_place&.update(admin_params)
+      render json: @food_place.as_json, status: :ok
+    else
+      render json: { success: false, errors: @food_place&.errors }, status: :unprocessable_entity
+    end
+  end
+
   def get_places_for_admin
-    @food_places = FoodPlace.all.order(created_at: :desc).search(params[:search])
-    result = paginate(@food_places)
+    scope = filtered_places(FoodPlace.all.order(created_at: :desc).search(params[:search]))
+    result = paginate(scope)
 
     render json: {
       data: result[:data].map do |food_place|
@@ -212,6 +225,8 @@ class Api::V1::FoodPlacesController < ApplicationController
           business_name: food_place.business_name,
           images: food_place.images_url,
           categories: food_place.categories,
+          is_vip: food_place.is_vip,
+          created_at: food_place.created_at,
           user: {
             name: food_place.user&.name,
             last_name: food_place.user&.last_name,
@@ -232,7 +247,13 @@ class Api::V1::FoodPlacesController < ApplicationController
       categories = params[:categories].split(",").map(&:strip).map(&:downcase)
       scope = scope.where("categories && ARRAY[?]::varchar[]", categories)
     end
-
+    if params[:plan].present?
+      scope = case params[:plan].downcase
+      when "vip" then scope.vip
+      when "free" then scope.free
+      else scope
+      end
+    end
     scope
   end
 
@@ -253,6 +274,10 @@ class Api::V1::FoodPlacesController < ApplicationController
 
   def review_params
     params.permit(:rating, :comment)
+  end
+
+  def admin_params
+    params.permit(:is_vip)
   end
 
   def food_place_params
