@@ -3,13 +3,14 @@ class Blog < ApplicationRecord
   has_one_attached :image, dependent: :destroy
 
   validates :title,
-            length: { maximum: 50, message: I18n.t("activerecord.errors.models.blog.title.too_long") },
-            presence: { message: I18n.t("activerecord.errors.models.blog.title.blank") }
+            presence: { message: I18n.t("activerecord.errors.models.blog.title.blank") },
+            length: { maximum: 50, message: I18n.t("activerecord.errors.models.blog.title.too_long") }
+
   validates :content,
+            presence: { message: I18n.t("activerecord.errors.models.blog.content.blank") },
             length: {
               maximum: 5000,
-              message: I18n.t("activerecord.errors.models.blog.content.too_long") },
-            presence: { message: I18n.t("activerecord.errors.models.blog.content.blank") }
+              message: I18n.t("activerecord.errors.models.blog.content.too_long") }
 
   validate :acceptable_image
 
@@ -28,8 +29,17 @@ class Blog < ApplicationRecord
   def formatted_content
     return [] unless content.present?
 
-    content&.scan(/.{1,900}(?:\s|$)/).map(&:strip)
+    content&.scan(/.{1,900}(?:\s|$)/)&.map(&:strip)
   end
+
+  scope :search, ->(search_term) {
+    if search_term.present?
+      term = "%#{search_term.strip.downcase}%"
+      where("LOWER(title) LIKE ? OR LOWER(content) LIKE ?", term, term)
+    else
+      all
+    end
+  }
 
   private
 
