@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_18_081802) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_23_115216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,6 +86,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_081802) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "vip_expires_at"
+    t.boolean "hidden"
     t.index ["user_id"], name: "index_food_places_on_user_id"
     t.index ["vip_expires_at"], name: "index_food_places_on_vip_expires_at"
   end
@@ -104,6 +105,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_081802) do
     t.index ["food_place_id"], name: "index_payments_on_food_place_id"
     t.index ["pay_id"], name: "index_payments_on_pay_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "food_place_id", null: false
+    t.string "title"
+    t.string "description"
+    t.integer "status", default: 0
+    t.string "report_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["food_place_id"], name: "index_reports_on_food_place_id"
+    t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -146,6 +160,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_081802) do
   add_foreign_key "food_places", "users"
   add_foreign_key "payments", "food_places"
   add_foreign_key "payments", "users"
+  add_foreign_key "reports", "food_places"
+  add_foreign_key "reports", "users"
   add_foreign_key "reviews", "food_places"
   add_foreign_key "reviews", "users"
 end

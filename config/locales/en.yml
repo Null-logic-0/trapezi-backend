@@ -10,6 +10,11 @@ en:
   activerecord:
     errors:
       models:
+        report:
+          title:
+            blank: "Title is required"
+          description:
+            blank: "Description is required"
         blog:
           title:
             blank: "Title is required"

@@ -9,6 +9,11 @@ ka:
   activerecord:
     errors:
       models:
+        report:
+          title:
+            blank: "სათაური სავალდებულოა"
+          description:
+            blank: "აღწერა სავალდებულოა"
         blog:
           title:
             blank: "სათაური სავალდებულოა"

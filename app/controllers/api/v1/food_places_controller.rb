@@ -1,12 +1,13 @@
 class Api::V1::FoodPlacesController < ApplicationController
   include Pagination
-  before_action :set_food_place, only: %i[ show update destroy toggle_favorite get_reviews create_review delete_review update_review destroy_by_admin update_by_admin ]
+  before_action :set_food_place, only: %i[ show update destroy destroy_by_admin update_by_admin ]
   before_action :require_login, except: %i[ index get_vip_places  ]
   before_action :admin?, only: %i[destroy_by_admin get_places_for_admin update_by_admin ]
 
   def index
     scope = filtered_places(
       FoodPlace
+        .visible
         .left_joins(:reviews)
         .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
         .group("food_places.id")
@@ -103,88 +104,6 @@ class Api::V1::FoodPlacesController < ApplicationController
     render json: { error: "Food place not found" }, status: :not_found
   end
 
-  # Favorite Places
-  def favorites
-    scope = filtered_places(
-      current_user&.favorite_food_places&.order(created_at: :desc)&.search(params[:search])
-    )
-    result = paginate(scope)
-    render json: {
-      data: result[:data].as_json,
-      pagination: result[:meta]
-    }, status: :ok
-  rescue => e
-    render json: { error: e.message }, status: :internal_server_error
-  end
-
-  def toggle_favorite
-    favorite = current_user&.favorites&.find_by(food_place: @food_place)
-
-    if favorite
-      favorite.destroy
-      render json: { success: true, favorite: false, message: "Removed from favorites" }, status: :ok
-    else
-      current_user&.favorites&.create(food_place: @food_place)
-      render json: { success: true, favorite: true, message: "Added to favorites" }, status: :ok
-    end
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Food place not found" }, status: :not_found
-  rescue => e
-    render json: { error: e.message }, status: :internal_server_error
-  end
-
-  # Reviews
-
-  def get_reviews
-    @reviews = @food_place.reviews.includes(:user).order(created_at: :desc)
-    render json: @reviews.as_json(
-      include: { user: { only: %i[id name last_name] } },
-      except: %i[updated_at]
-    ), status: :ok
-  rescue => e
-    render json: { error: e.message }, status: :internal_server_error
-  end
-
-  def create_review
-    review = current_user&.reviews&.build(review_params.merge(food_place_id: @food_place.id))
-
-    if review
-      review.save
-      render json: review.as_json(include: { user: { only: %i[id name last_name] } }), status: :created
-    else
-      render json: { success: false, errors: formatted_errors(review) }, status: :unprocessable_entity
-    end
-  end
-
-  def update_review
-    review = current_user&.reviews&.find_by(id: params[:review_id], food_place_id: @food_place.id)
-
-    unless review
-      render json: { error: "Review not found or not authorized" }, status: :forbidden
-      return
-    end
-
-    if review.update(review_params)
-      render json: review.as_json, status: :ok
-    else
-      render json: { success: false, errors: formatted_errors(review) }, status: :unprocessable_entity
-    end
-  end
-
-  def delete_review
-    review = current_user&.reviews&.find_by(id: params[:review_id], food_place_id: @food_place.id)
-
-    unless review
-      render json: { error: "Review not found or not authorized" }, status: :forbidden
-      return
-    end
-
-    review.destroy!
-    render json: { success: true, message: "Review deleted successfully" }, status: :ok
-  rescue => e
-    render json: { error: e.message }, status: :internal_server_error
-  end
-
   # Admin
 
   def destroy_by_admin
@@ -242,21 +161,6 @@ class Api::V1::FoodPlacesController < ApplicationController
 
   private
 
-  def filtered_places(scope)
-    if params[:categories].present?
-      categories = params[:categories].split(",").map(&:strip).map(&:downcase)
-      scope = scope.where("categories && ARRAY[?]::varchar[]", categories)
-    end
-    if params[:plan].present?
-      scope = case params[:plan].downcase
-      when "vip" then scope.vip
-      when "free" then scope.free
-      else scope
-      end
-    end
-    scope
-  end
-
   def self.search
     if params[:search].present?
       search_term = "%#{params[:search].strip.downcase}%"
@@ -270,10 +174,6 @@ class Api::V1::FoodPlacesController < ApplicationController
     @food_place = FoodPlace.find(id_param)
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Food place not found" }, status: :not_found
-  end
-
-  def review_params
-    params.permit(:rating, :comment)
   end
 
   def admin_params
