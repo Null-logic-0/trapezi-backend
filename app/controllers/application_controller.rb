@@ -4,7 +4,7 @@ class ApplicationController < ActionController::API
   before_action :set_locale
   before_action :require_login
 
-  helper_method :current_user, :encode_token, :decode_token, :formatted_errors
+  helper_method :current_user, :encode_token, :decode_token, :formatted_errors, :filtered_places
 
   private
 
@@ -81,5 +81,20 @@ class ApplicationController < ActionController::API
     if @user&.is_blocked?
       render json: { error: "Your account has been blocked by admin!" }, status: :forbidden
     end
+  end
+
+  def filtered_places(scope)
+    if params[:categories].present?
+      categories = params[:categories].split(",").map(&:strip).map(&:downcase)
+      scope = scope.where("categories && ARRAY[?]::varchar[]", categories)
+    end
+    if params[:plan].present?
+      scope = case params[:plan].downcase
+      when "vip" then scope.vip
+      when "free" then scope.free
+      else scope
+      end
+    end
+    scope
   end
 end

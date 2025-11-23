@@ -8,6 +8,7 @@ class FoodPlace < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :favorite_by_users, through: :favorites, source: :user
   has_many :reviews, dependent: :destroy
+  has_many :reports, dependent: :destroy
 
   # Categories
   CATEGORIES = %w[restaurant cafe bar bakery pastry].freeze
@@ -86,6 +87,7 @@ class FoodPlace < ApplicationRecord
 
   scope :vip, -> { where(is_vip: true) }
   scope :free, -> { where(is_vip: false) }
+  scope :visible, -> { where(hidden: false) }
 
   scope :search, ->(search_term) {
     if search_term.present?
