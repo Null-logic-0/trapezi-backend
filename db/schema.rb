@@ -86,7 +86,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_23_115216) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "vip_expires_at"
-    t.boolean "hidden"
+    t.boolean "hidden", default: false
     t.index ["user_id"], name: "index_food_places_on_user_id"
     t.index ["vip_expires_at"], name: "index_food_places_on_vip_expires_at"
   end

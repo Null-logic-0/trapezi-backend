@@ -1,5 +1,5 @@
 class AddHideToFoodPlaces < ActiveRecord::Migration[8.0]
   def change
-    add_column :food_places, :hidden, :boolean
+    add_column :food_places, :hidden, :boolean, default: false
   end
 end
