@@ -13,6 +13,10 @@ class Report < ApplicationRecord
   validates :title, presence: { message: I18n.t("activerecord.errors.models.report.title.blank") }
   validates :description, presence: { message: I18n.t("activerecord.errors.models.report.description.blank") }
 
+  scope :pending, -> { where(status: "pending") }
+  scope :dismissed, -> { where(status: "dismissed") }
+  scope :resolved, -> { where(status: "resolved") }
+
   scope :search, ->(search_term) {
     if search_term.present?
       term = "%#{search_term.strip.downcase}%"

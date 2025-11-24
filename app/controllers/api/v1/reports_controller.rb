@@ -6,8 +6,8 @@ class Api::V1::ReportsController < ApplicationController
   before_action :set_report, except: [ :index, :create ]
 
   def index
-    @reports = Report.all.order(created_at: :desc).search(params[:search])
-    result = paginate(@reports)
+    scope = filtered_reports(report_scope)
+    result = paginate(scope)
 
     render json: {
       data: result[:data].as_json(include: report_includes),
@@ -55,6 +55,12 @@ class Api::V1::ReportsController < ApplicationController
 
   private
 
+  def report_scope
+    Report
+      .order(created_at: :desc)
+      .search(params[:search])
+  end
+
   def set_report
     @report = Report.find_by!(id: params[:report_id] || params[:id])
   rescue ActiveRecord::RecordNotFound
@@ -84,6 +90,18 @@ class Api::V1::ReportsController < ApplicationController
     scope
   end
 
+  def filtered_reports(scope)
+    return scope unless params[:status].present?
+
+    status = params[:status].to_s.downcase
+
+    if %w[pending dismissed resolved].include?(status)
+      scope.public_send(status)
+    else
+      scope
+    end
+  end
+
   def report_includes
     {
       user: { only: %i[id name last_name email] },
@@ -92,9 +110,9 @@ class Api::V1::ReportsController < ApplicationController
   end
 
   def handle_offending_content(report)
-    if report.user.reports.where(status: 2)
+    if report.user.reports.where(status: 2).exists?
       report.food_place.update(hidden: true)
-      report.user.update(is_blocked: true)
+      report.food_place.user.update(is_blocked: true)
       DeleteFoodPlaceJob.set(wait: 30.days).perform_later(report.food_place.id)
 
     end
