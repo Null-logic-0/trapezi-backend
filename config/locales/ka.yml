@@ -4,6 +4,8 @@ ka:
     unauthorized: "თქვენ არ გაქვთ დაშვება"
     invalid_credentials: "ელ.ფოსტა ან პაროლი არასწორია"
     not_admin: "თქვენ არ გაქვთ ადმინისტრატორის უფლებამოსილება"
+    registration_disabled: "რეგისტრაცია ამ ეტაპზე შეზღუდულია"
+    maintenance_mode_active: "ვებსაიტი ტექნიკურ განახლებაზეა.დიდი მადლობა მოთმინებისთვის-მალე დაგიბრუნდებით."
   messages:
     password_updated: "პაროლი წარმატებით განახლდა."
   activerecord:

@@ -15,6 +15,8 @@ Rails.application.routes.draw do
       post "/password_reset_request", to: "auth#password_reset_request", as: :password_reset_request
       post "/password_reset", to: "auth#password_reset", as: :password_reset
 
+      # Food Places
+
       resources :food_places
       get "/my_businesses", to: "food_places#my_businesses", as: :my_businesses
 
@@ -29,18 +31,29 @@ Rails.application.routes.draw do
 
       delete "delete_by_admin/:id", to: "food_places#destroy_by_admin", as: :destroy_by_admin
 
+      # Reviews
+
       get "reviews/:id", to: "reviews#get_reviews", as: :reviews
       post "reviews/:id", to: "reviews#create_review", as: :create_review
       patch "reviews/:place_id/:review_id", to: "reviews#update_review", as: :update_review
       delete "reviews/:place_id/:review_id", to: "reviews#delete_review", as: :delete_review
 
+      # Blog
       resources :blogs
 
+      # Reports
       get "reports", to: "reports#index", as: :reports
       get "report/:id", to: "reports#show", as: :report
       post "create_report/:id", to: "reports#create", as: :create_report
       patch "update_report/:place_id/:report_id", to: "reports#update", as: :update_report
       delete "destroy_report/:place_id/:report_id", to: "reports#destroy", as: :destroy_report
+
+      # settings
+      patch "admin/registration", to: "settings#update_registration", as: :update_registration
+      get "admin/registration", to: "settings#get_registration", as: :get_registration
+
+      patch "admin/maintenance", to: "settings#update_maintenance_mode", as: :update_maintenance_mode
+      get "admin/maintenance", to: "settings#maintenance_mode", as: :get_maintenance_mode
     end
   end
 end

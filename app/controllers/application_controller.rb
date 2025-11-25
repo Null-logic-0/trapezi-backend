@@ -3,10 +3,27 @@ class ApplicationController < ActionController::API
 
   before_action :set_locale
   before_action :require_login
+  before_action :check_maintenance_mode
 
-  helper_method :current_user, :encode_token, :decode_token, :formatted_errors, :filtered_places
+  helper_method :current_user,
+                :encode_token,
+                :decode_token,
+                :formatted_errors,
+                :filtered_places
 
   private
+
+  def check_maintenance_mode
+    return unless AppSetting.maintenance_mode?
+
+    return if current_user&.is_admin?
+
+    return if request.path.include?("/login") || request.path.include?("/logout") || request.path.include?("/blog")
+
+    render json: {
+      error: I18n.t("errors.maintenance_mode_active")
+    }, status: :service_unavailable
+  end
 
   def set_locale
     locale = request.headers["Accept-Language"]&.slice(0, 2)&.to_sym
