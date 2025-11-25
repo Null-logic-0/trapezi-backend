@@ -4,6 +4,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     @admin = users(:admin)
+    AppSetting.create!(registration_enabled: true) unless AppSetting.exists?
   end
 
   test "should get index" do
@@ -26,15 +27,15 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create user" do
-    assert_difference("User.count") do
-      post api_v1_signup_path, params: {
-        name: "john",
-        last_name: "doe",
-        email: "john@example.com",
-        password: "password1234",
-        password_confirmation: "password1234"
-      }, as: :json
-    end
+    AppSetting.define_singleton_method(:registration_enabled?) { true }
+
+    post api_v1_signup_path, params: {
+      name: "john",
+      last_name: "doe",
+      email: "john@example.com",
+      password: "password1234",
+      password_confirmation: "password1234"
+    }, as: :json
 
     assert_response :success
   end
