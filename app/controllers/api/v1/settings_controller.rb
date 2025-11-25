@@ -1,5 +1,6 @@
 class Api::V1::SettingsController < ApplicationController
-  before_action :admin?
+  before_action :admin?, except: [ :get_registration, :maintenance_mode ]
+  before_action :require_login, only: [ :update_registration, :update_maintenance_mode ]
 
   def update_registration
     unless params.key?(:enabled)

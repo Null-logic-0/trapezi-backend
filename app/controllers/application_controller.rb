@@ -18,7 +18,11 @@ class ApplicationController < ActionController::API
 
     return if current_user&.is_admin?
 
-    return if request.path.include?("/login") || request.path.include?("/logout") || request.path.include?("/blog")
+    return if request.path.include?("/login") ||
+              request.path.include?("/logout") ||
+              request.path.include?("/blog") ||
+              request.path.include?("/admin/maintenance") ||
+              request.path.include?("/admin/registration")
 
     render json: {
       error: I18n.t("errors.maintenance_mode_active")
