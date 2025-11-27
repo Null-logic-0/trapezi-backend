@@ -11,6 +11,19 @@ en:
   activerecord:
     errors:
       models:
+        video:
+          title:
+            blank: "Title is required"
+            too_long: "Title is too long"
+          description:
+            blank: "Description is required"
+            too_long: "Description must be at most 150 characters"
+          thumbnail:
+            too_large: "Thumbnail must be less than 8MB"
+            invalid_format: "Thumbnail must be in png, jpg, or jpeg format"
+          video:
+            too_large: "Video must be less than 800MB"
+            invalid_format: "Video must be in mov, mp4 format"
         report:
           title:
             blank: "Title is required"

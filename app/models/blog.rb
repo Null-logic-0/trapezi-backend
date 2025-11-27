@@ -1,6 +1,7 @@
 class Blog < ApplicationRecord
   belongs_to :user
   has_one_attached :image, dependent: :destroy
+  before_validation :normalize_fields
 
   validates :title,
             presence: { message: I18n.t("activerecord.errors.models.blog.title.blank") },
@@ -60,5 +61,9 @@ class Blog < ApplicationRecord
     unless acceptable_types.include? image.content_type
       errors.add(:image, I18n.t("activerecord.errors.models.blog.image.invalid_format"))
     end
+  end
+
+  def normalize_fields
+    self.title = title&.upcase&.strip if title.present?
   end
 end

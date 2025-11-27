@@ -54,6 +54,10 @@ Rails.application.routes.draw do
 
       patch "admin/maintenance", to: "settings#update_maintenance_mode", as: :update_maintenance_mode
       get "admin/maintenance", to: "settings#maintenance_mode", as: :get_maintenance_mode
+
+      # Video tutorials
+
+      resources :video_tutorials
     end
   end
 end

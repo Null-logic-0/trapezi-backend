@@ -1,6 +1,6 @@
 class FoodPlace < ApplicationRecord
   belongs_to :user
-
+  before_validation :normalize_fields
   # ActiveStorage attachments
   has_many_attached :images
   has_one_attached :menu_pdf
@@ -204,5 +204,10 @@ class FoodPlace < ApplicationRecord
         count: MAX_PDF_SIZE_MB
       ))
     end
+  end
+
+  def normalize_fields
+    self.business_name = business_name&.upcase&.strip if business_name.present?
+    self.description = description&.upcase&.strip if description.present?
   end
 end
