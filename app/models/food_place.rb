@@ -207,7 +207,7 @@ class FoodPlace < ApplicationRecord
   end
 
   def normalize_fields
-    self.business_name = business_name&.upcase&.strip if business_name.present?
-    self.description = description&.upcase&.strip if description.present?
+    self.business_name = business_name&.capitalize&.strip if business_name.present?
+    self.description = description&.capitalize&.strip if description.present?
   end
 end

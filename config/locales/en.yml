@@ -19,9 +19,11 @@ en:
             blank: "Description is required"
             too_long: "Description must be at most 150 characters"
           thumbnail:
+            blank: "Thumbnail is required"
             too_large: "Thumbnail must be less than 8MB"
             invalid_format: "Thumbnail must be in png, jpg, or jpeg format"
           video:
+            blank: "Video upload is required"
             too_large: "Video must be less than 800MB"
             invalid_format: "Video must be in mov, mp4 format"
         report:

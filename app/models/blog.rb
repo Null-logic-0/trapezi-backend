@@ -64,6 +64,6 @@ class Blog < ApplicationRecord
   end
 
   def normalize_fields
-    self.title = title&.upcase&.strip if title.present?
+    self.title = title&.capitalize&.strip if title.present?
   end
 end

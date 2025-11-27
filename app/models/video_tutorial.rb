@@ -47,6 +47,10 @@ class VideoTutorial < ApplicationRecord
   def acceptable_thumbnail
     return if Rails.env.test?
     unless thumbnail.attached?
+      errors.add(:thumbnail, I18n.t(
+        "activerecord.errors.models.video.thumbnail.blank")
+      )
+      return
     end
 
     unless thumbnail.byte_size <= 8.megabyte
@@ -60,7 +64,13 @@ class VideoTutorial < ApplicationRecord
   end
 
   def acceptable_video
-    return unless video.attached?
+    return if Rails.env.test?
+    unless video.attached?
+      errors.add(:video, I18n.t(
+        "activerecord.errors.models.video.video.blank")
+      )
+      return
+    end
 
     unless video.byte_size <= 800.megabytes
       errors.add(:video, I18n.t("activerecord.errors.models.video.video.too_large"))
@@ -73,7 +83,7 @@ class VideoTutorial < ApplicationRecord
   end
 
   def normalize_fields
-    self.title = title&.upcase&.strip if title.present?
-    self.description = description&.upcase&.strip if description.present?
+    self.title = title&.capitalize&.strip if title.present?
+    self.description = description&.capitalize&.strip if description.present?
   end
 end

@@ -19,9 +19,11 @@ ka:
             blank: "აღწერა სავალდებულოა"
             too_long: "აღწერა ზომა არ უნდა აღემატებოდეს 150 სიმბოლოს"
           thumbnail:
+            blank: "თამბნეილი აუცილებელია"
             too_large: "სურთი უნდა იყოს 8MB-მდე"
             invalid_format: "სურათი უნდა იყოს png, jpg ან jpeg ფორმატში"
           video:
+            blank: "ვიდეოს ატვირთვა აუცლიებელია"
             too_large: "ვიდეო უნდა იყოს 800MB-მდე"
             invalid_format: "ვიდეო უნდა იყოს mp4,mov ფორმატში"
         report:

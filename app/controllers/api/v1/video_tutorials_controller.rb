@@ -23,8 +23,16 @@ class Api::V1::VideoTutorialsController < ApplicationController
   end
 
   def create
+    uploaded_video = params[:video]
+    unless uploaded_video
+      render json: { success: false, errors: I18n.t(
+        "activerecord.errors.models.video.video.blank")
+      }, status: :bad_request
+      return
+    end
+    duration = Videotime.get_video_time(uploaded_video.path)
     @video_tutorial = current_user&.video_tutorials&.build(video_tutorials_params)
-    @video_tutorial.duration = video_duration
+    @video_tutorial.duration = duration
 
     if @video_tutorial.save
       render json: @video_tutorial, success: true, status: :created
@@ -67,11 +75,6 @@ class Api::V1::VideoTutorialsController < ApplicationController
 
   def format_duration(seconds)
     Time.at(seconds).utc.strftime("%H:%M:%S")
-  end
-
-  def video_duration
-    uploaded_video = params[:video]
-    Videotime.get_video_time(uploaded_video.path)
   end
 
   def set_video_tutorial
