@@ -22,7 +22,8 @@ class ApplicationController < ActionController::API
               request.path.include?("/logout") ||
               request.path.include?("/blog") ||
               request.path.include?("/admin/maintenance") ||
-              request.path.include?("/admin/registration")
+              request.path.include?("/admin/registration") ||
+              request.path.include?("/video_tutorials")
 
     render json: {
       error: I18n.t("errors.maintenance_mode_active")
