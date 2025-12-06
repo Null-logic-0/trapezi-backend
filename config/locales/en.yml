@@ -6,6 +6,7 @@ en:
     not_admin: "You are not authorized as admin"
     registration_disabled: "Registration is currently disabled."
     maintenance_mode_active: "We’re performing some updates. Thanks for your patience — we’ll be back online soon!"
+    free_plan: "Free plan allows only create one food place"
   messages:
     password_updated: "Password successfully updated."
   activerecord:

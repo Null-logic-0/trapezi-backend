@@ -1,6 +1,8 @@
 class FoodPlace < ApplicationRecord
   belongs_to :user
   before_validation :normalize_fields
+  before_create :set_hidden_for_paid_plan
+
   # ActiveStorage attachments
   has_many_attached :images
   has_one_attached :menu_pdf
@@ -19,6 +21,7 @@ class FoodPlace < ApplicationRecord
   # Validations
   validates :business_name, :address, :categories, presence: true
   validates :description, presence: true, length: { maximum: 200 }
+  validate :free_plan_limit, on: :create
 
   validate :categories_count_within_limit
   validate :validate_categories_inclusion
@@ -61,6 +64,26 @@ class FoodPlace < ApplicationRecord
     end
   end
 
+  def currently_open(time = Time.current)
+    today = time.strftime("%A").downcase
+    schedule = working_schedule[today] || {}
+    from_time = schedule["from"]
+    to_time = schedule["to"]
+    return false unless from_time && to_time
+
+    from_hour, from_min = from_time.split(":").map(&:to_i)
+    to_hour, to_min = to_time.split(":").map(&:to_i)
+
+    from_datetime = time.change(hour: from_hour, min: from_min)
+    to_datetime = time.change(hour: to_hour, min: to_min)
+
+    if from_datetime < to_datetime
+      time.between?(from_datetime, to_datetime)
+    else
+      time >= from_datetime || time <= to_datetime
+    end
+  end
+
   def images_url
     return unless images.attached?
     images.map do |img|
@@ -70,8 +93,8 @@ class FoodPlace < ApplicationRecord
 
   def as_json(options = {})
     super({
-            methods: [ :images_url, :menu_url, :working_schedule_readable, :average_rating ],
-            except: [ :password_digest, :created_at, :updated_at ]
+            methods: [ :images_url, :menu_url, :working_schedule_readable, :average_rating, :currently_open ],
+            except: [ :password_digest, :created_at, :updated_at, :is_open ]
           }.merge(options))
   end
 
@@ -99,6 +122,19 @@ class FoodPlace < ApplicationRecord
   }
 
   private
+
+  def free_plan_limit
+    return unless user&.free_plan?
+    if user&.plan? && user&.food_places&.exists?
+      errors.add(:plan, I18n.t("errors.free_plan"))
+    end
+  end
+
+  def set_hidden_for_paid_plan
+    if user.paid_plan?
+      self.hidden = false
+    end
+  end
 
   # --- Categories validations ---
   MAX_CATEGORIES = 3

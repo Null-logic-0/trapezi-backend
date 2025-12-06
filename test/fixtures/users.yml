@@ -8,6 +8,7 @@ one:
   is_admin: false
   business_owner: false
   moderator: false
+  plan: pro
 
 two:
   name: Mark

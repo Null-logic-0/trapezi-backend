@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_06_114503) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_06_131417) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -94,6 +94,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_06_114503) do
     t.datetime "updated_at", null: false
     t.datetime "vip_expires_at"
     t.boolean "hidden", default: false
+    t.boolean "is_open", default: false, null: false
     t.index ["user_id"], name: "index_food_places_on_user_id"
     t.index ["vip_expires_at"], name: "index_food_places_on_vip_expires_at"
   end

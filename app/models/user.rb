@@ -100,6 +100,14 @@ class User < ApplicationRecord
     end
   }
 
+  def free_plan?
+    plan == "free"
+  end
+
+  def paid_plan?
+    plan == "pro"
+  end
+
   private
 
   def password_required?
