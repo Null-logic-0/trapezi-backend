@@ -12,6 +12,12 @@ class User < ApplicationRecord
 
   has_one_attached :avatar, dependent: :destroy
 
+  enum :plan, {
+    free: "free",
+    pro: "pro"
+  }, default: "free"
+
+  validates :plan, inclusion: { in: plans.keys }
   # User validation
   validates :name, presence: { message: I18n.t("activerecord.errors.models.user.attributes.name.blank") }
   validates :last_name, presence: { message: I18n.t("activerecord.errors.models.user.attributes.last_name.blank") }
