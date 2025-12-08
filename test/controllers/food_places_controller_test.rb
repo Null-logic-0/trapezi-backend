@@ -37,6 +37,8 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
            phone: "+995555377505",
            address: "Rustaveli Ave 15 Tbilisi, Georgia",
            menu_pdf: fixture_file_upload("sample.pdf", "application/pdf"),
+           document_pdf: fixture_file_upload("sample.pdf", "application/pdf"),
+           identification_code: "12222",
            images: [
              fixture_file_upload("image1.jpg", "image/jpg")
            ]

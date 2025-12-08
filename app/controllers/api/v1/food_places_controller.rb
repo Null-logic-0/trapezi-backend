@@ -147,6 +147,8 @@ class Api::V1::FoodPlacesController < ApplicationController
           images: food_place.images_url,
           categories: food_place.categories,
           is_vip: food_place.is_vip,
+          identification_code: food_place.identification_code,
+          document_url: food_place.document_url,
           created_at: food_place.created_at,
           user: {
             name: food_place.user&.name,
@@ -213,6 +215,8 @@ class Api::V1::FoodPlacesController < ApplicationController
       :instagram,
       :tiktok,
       :phone,
+      :identification_code,
+      :document_pdf,
       :working_schedule,
       images: [],
 

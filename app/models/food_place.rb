@@ -1,4 +1,6 @@
 class FoodPlace < ApplicationRecord
+  include FoodPlace::PdfValidator
+
   belongs_to :user
   before_validation :normalize_fields
   before_create :set_hidden_for_paid_plan
@@ -6,6 +8,7 @@ class FoodPlace < ApplicationRecord
   # ActiveStorage attachments
   has_many_attached :images
   has_one_attached :menu_pdf
+  has_one_attached :document_pdf
 
   has_many :favorites, dependent: :destroy
   has_many :favorite_by_users, through: :favorites, source: :user
@@ -21,6 +24,7 @@ class FoodPlace < ApplicationRecord
   # Validations
   validates :business_name, :address, :categories, presence: true
   validates :description, presence: true, length: { maximum: 200 }
+  validates :identification_code, presence: true, on: :create
   validate :free_plan_limit, on: :create
 
   validate :categories_count_within_limit
@@ -28,6 +32,7 @@ class FoodPlace < ApplicationRecord
   validate :validate_working_schedule_format
   validate :validate_images
   validate :validate_menu_pdf, on: :create
+  validate :validate_document_pdf, on: :create
 
   # --- Phone validation ---
   VALID_PHONE_REGEX = /\A(\+995)?5?\d{9}\z/
@@ -97,16 +102,21 @@ class FoodPlace < ApplicationRecord
     end
   end
 
-  def as_json(options = {})
-    super({
-            methods: [ :images_url, :menu_url, :working_schedule_readable, :average_rating, :currently_open ],
-            except: [ :password_digest, :created_at, :updated_at, :is_open ]
-          }.merge(options))
-  end
-
   def menu_url
     return unless menu_pdf.attached?
     Rails.application.routes.url_helpers.url_for(menu_pdf)
+  end
+
+  def document_url
+    return unless document_pdf.attached?
+    Rails.application.routes.url_helpers.url_for(document_pdf)
+  end
+
+  def as_json(options = {})
+    super({
+            methods: [ :images_url, :menu_url, :document_url, :working_schedule_readable, :average_rating, :currently_open ],
+            except: [ :password_digest, :created_at, :updated_at, :is_open ]
+          }.merge(options))
   end
 
   def average_rating
@@ -227,25 +237,13 @@ class FoodPlace < ApplicationRecord
     end
   end
 
-  # --- Menu PDF validations ---
-  MAX_PDF_SIZE_MB = 15
-
+  # --- PDF validations ---
   def validate_menu_pdf
-    unless menu_pdf.attached?
-      errors.add(:menu_pdf, I18n.t("activerecord.errors.models.food_place.attributes.menu_pdf.blank"))
-      return
-    end
+    validate_pdf(menu_pdf, :menu_pdf)
+  end
 
-    unless menu_pdf.content_type == "application/pdf"
-      errors.add(:menu_pdf, I18n.t("activerecord.errors.models.food_place.attributes.menu_pdf.invalid_format"))
-    end
-
-    if menu_pdf.byte_size > MAX_PDF_SIZE_MB.megabytes
-      errors.add(:menu_pdf, I18n.t(
-        "activerecord.errors.models.food_place.attributes.menu_pdf.too_large",
-        count: MAX_PDF_SIZE_MB
-      ))
-    end
+  def validate_document_pdf
+    validate_pdf(document_pdf, :document_pdf)
   end
 
   def normalize_fields

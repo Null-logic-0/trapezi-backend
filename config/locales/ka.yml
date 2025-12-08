@@ -88,6 +88,8 @@ ka:
               blank: "მისამართი სავალდებულოა"
             phone:
               invalid_format: "ტელეფონის ნომერი არასწორია"
+            identification_code:
+              blank: "საინდეთიფიკაციო ნომერი აუცლიებელია"
             categories:
               blank: "კატეგორიები სავალდებულოა"
               too_many: "მაქსიმუმ %{count} კატეგორია შეიძლება იყოს"
@@ -103,10 +105,10 @@ ka:
               invalid_format: "სურათი უნდა იყოს JPEG ან PNG ფორმატში"
               too_many: "მაქსიმუმ %{count} სურათი შეიძლება იყოს"
               too_large: "სურათი უნდა იყოს %{count}MB-მდე"
-            menu_pdf:
-              blank: "მენიუს PDF სავალდებულოა"
-              invalid_format: "მენიუს ფაილი უნდა იყოს PDF ფორმატში"
-              too_large: "მენიუს ფაილი უნდა იყოს %{count}MB-მდე"
+            pdf:
+              blank: "PDF სავალდებულოა"
+              invalid_format: "ფაილი უნდა იყოს PDF ფორმატში"
+              too_large: "ფაილი უნდა იყოს %{count}MB-მდე"
 
 
       errors:
