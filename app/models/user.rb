@@ -38,7 +38,13 @@ class User < ApplicationRecord
 
   def avatar_url
     return unless avatar.attached?
-    Rails.application.routes.url_helpers.url_for(avatar)
+
+    if Rails.env.production?
+      bucket = ENV.fetch("AWS_BUCKET_URL")
+      "#{bucket}/#{avatar.key}"
+    else
+      Rails.application.routes.url_helpers.url_for(avatar)
+    end
   end
 
   def as_json(options = {})
@@ -106,6 +112,15 @@ class User < ApplicationRecord
 
   def paid_plan?
     plan == "pro"
+  end
+
+  def add_strike!
+    update(strike_count: (strike_count || 0) + 1)
+    block! if strike_count >= 2
+  end
+
+  def block!
+    update!(is_blocked: true)
   end
 
   private

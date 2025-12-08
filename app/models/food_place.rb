@@ -86,8 +86,14 @@ class FoodPlace < ApplicationRecord
 
   def images_url
     return unless images.attached?
+
     images.map do |img|
-      Rails.application.routes.url_helpers.url_for(img)
+      if Rails.env.production?
+        bucket = ENV.fetch("AWS_BUCKET_URL")
+        "#{bucket}/#{img.key}"
+      else
+        Rails.application.routes.url_helpers.url_for(img)
+      end
     end
   end
 
@@ -137,7 +143,7 @@ class FoodPlace < ApplicationRecord
   end
 
   # --- Categories validations ---
-  MAX_CATEGORIES = 3
+  MAX_CATEGORIES = 2
 
   def categories_count_within_limit
     if categories.size > MAX_CATEGORIES
@@ -187,8 +193,8 @@ class FoodPlace < ApplicationRecord
   end
 
   # --- Image validations ---
-  MAX_IMAGES = 5
-  MAX_IMAGE_SIZE_MB = 5
+  MAX_IMAGES = 4
+  MAX_IMAGE_SIZE_MB = 15
   VALID_IMAGE_TYPES = %w[image/jpeg image/png image/jpg].freeze
 
   def validate_images
@@ -222,7 +228,7 @@ class FoodPlace < ApplicationRecord
   end
 
   # --- Menu PDF validations ---
-  MAX_PDF_SIZE_MB = 10
+  MAX_PDF_SIZE_MB = 15
 
   def validate_menu_pdf
     unless menu_pdf.attached?
