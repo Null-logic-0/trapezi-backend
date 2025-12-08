@@ -38,9 +38,9 @@ class User < ApplicationRecord
 
   def avatar_url
     return unless avatar.attached?
-    bucket = ENV.fetch("AWS_BUCKET_URL")
 
     if Rails.env.production?
+      bucket = ENV.fetch("AWS_BUCKET_URL")
       "#{bucket}/#{avatar.key}"
     else
       Rails.application.routes.url_helpers.url_for(avatar)

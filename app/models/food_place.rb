@@ -86,10 +86,10 @@ class FoodPlace < ApplicationRecord
 
   def images_url
     return unless images.attached?
-    bucket = ENV.fetch("AWS_BUCKET_URL")
 
     images.map do |img|
       if Rails.env.production?
+        bucket = ENV.fetch("AWS_BUCKET_URL")
         "#{bucket}/#{img.key}"
       else
         Rails.application.routes.url_helpers.url_for(img)
