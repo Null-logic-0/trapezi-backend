@@ -11,6 +11,7 @@ module TrapeziBackend
     config.load_defaults 8.0
     config.autoload_lib(ignore: %w[assets tasks])
     config.api_only = true
+    config.eager_load_paths << Rails.root.join("app/services")
 
     # -------------------------
     # i18n configuration

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_06_131417) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_07_103102) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -158,6 +158,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_06_131417) do
     t.datetime "confirmation_sent_at"
     t.datetime "confirmed_at"
     t.string "plan", default: "free", null: false
+    t.integer "strike_count"
     t.index ["password_reset_token"], name: "index_users_on_password_reset_token"
   end
 

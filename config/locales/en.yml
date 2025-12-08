@@ -7,6 +7,8 @@ en:
     registration_disabled: "Registration is currently disabled."
     maintenance_mode_active: "We’re performing some updates. Thanks for your patience — we’ll be back online soon!"
     free_plan: "Free plan allows only create one food place"
+    disallowed_content: "Your review can’t be posted due to disallowed content"
+    disallowed_images: "This image violates our content guidelines"
   messages:
     password_updated: "Password successfully updated."
   activerecord:

@@ -3,6 +3,7 @@ class Api::V1::FoodPlacesController < ApplicationController
   before_action :set_food_place, only: %i[ show update destroy destroy_by_admin update_by_admin ]
   before_action :require_login, except: %i[ index get_vip_places  ]
   before_action :admin?, only: %i[destroy_by_admin get_places_for_admin update_by_admin ]
+  before_action :validate_nsfw_images, only: %i[create update]
 
   def index
     scope = filtered_places(
@@ -69,6 +70,7 @@ class Api::V1::FoodPlacesController < ApplicationController
 
     if @food_place.save
       render json: @food_place, success: true, status: :created
+
     else
       render json: {
         success: false,
@@ -160,6 +162,25 @@ class Api::V1::FoodPlacesController < ApplicationController
   end
 
   private
+
+  def validate_nsfw_images
+    raw_images = params[:images] || params.dig(:images)
+    return unless raw_images.present?
+
+    images_to_check = Array(raw_images).select do |image|
+      image.is_a?(ActionDispatch::Http::UploadedFile)
+    end
+
+    return if images_to_check.empty?
+
+    if Moderations::ImageModeration.any_nsfw?(images_to_check)
+      render json: {
+        success: false,
+        errors: { nsfw: I18n.t("errors.disallowed_images") }
+      }, status: :forbidden
+      false
+    end
+  end
 
   def self.search
     if params[:search].present?
