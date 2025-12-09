@@ -6,15 +6,7 @@ class Api::V1::FoodPlacesController < ApplicationController
   before_action :validate_nsfw_images, only: %i[create update]
 
   def index
-    scope = filtered_places(
-      FoodPlace
-        .visible
-        .left_joins(:reviews)
-        .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
-        .group("food_places.id")
-        .order("is_vip DESC, average_rating DESC")
-        .search(params[:search])
-    )
+    scope = FoodPlaces::FilterService.new(scope: FoodPlace.visible, params: params).call
 
     result = paginate(scope)
 
@@ -27,13 +19,15 @@ class Api::V1::FoodPlacesController < ApplicationController
   end
 
   def get_vip_places
-    scope = filtered_places(
-      FoodPlace.where(is_vip: true)
-               .left_joins(:reviews)
-               .select("food_places.*, COALESCE(AVG(reviews.rating), 0) AS average_rating")
-               .group("food_places.id")
-               .order("average_rating DESC").search(params[:search])
-    )
+    scope = FoodPlaces::FilterService.new(
+      scope: FoodPlace.visible.where(is_vip: true),
+      params: {
+        search: params[:search],
+        categories: params[:categories],
+        visible_only: true,
+        vip_first: false
+      }
+    ).call
 
     result = paginate(scope)
     render json: {
@@ -66,7 +60,7 @@ class Api::V1::FoodPlacesController < ApplicationController
   end
 
   def create
-    @food_place = current_user&.food_places&.build(food_place_params)
+    @food_place = current_user&.food_places&.build(FoodPlaces::ParamsService.build(params))
 
     if @food_place.save
       render json: @food_place, success: true, status: :created
@@ -87,7 +81,7 @@ class Api::V1::FoodPlacesController < ApplicationController
       return
     end
 
-    if @food_place.update(food_place_params)
+    if @food_place.update(FoodPlaces::ParamsService.build(params))
       render json: @food_place.as_json, status: :ok
     else
       render json: { success: false, errors: formatted_errors(@food_place) }, status: :unprocessable_entity
@@ -128,7 +122,8 @@ class Api::V1::FoodPlacesController < ApplicationController
       return
     end
 
-    if @food_place&.update(admin_params)
+    if @food_place&.update(params.permit(:is_vip)
+    )
       render json: @food_place.as_json, status: :ok
     else
       render json: { success: false, errors: @food_place&.errors }, status: :unprocessable_entity
@@ -140,23 +135,7 @@ class Api::V1::FoodPlacesController < ApplicationController
     result = paginate(scope)
 
     render json: {
-      data: result[:data].map do |food_place|
-        {
-          id: food_place.id,
-          business_name: food_place.business_name,
-          images: food_place.images_url,
-          categories: food_place.categories,
-          is_vip: food_place.is_vip,
-          identification_code: food_place.identification_code,
-          document_url: food_place.document_url,
-          created_at: food_place.created_at,
-          user: {
-            name: food_place.user&.name,
-            last_name: food_place.user&.last_name,
-            avatar_url: food_place.user&.avatar_url
-          }
-        }
-      end,
+      data: result[:data].map { |foodPlace| FoodPlaces::FoodPlaceAdminSerializer.new(foodPlace).as_json },
       pagination: result[:meta]
     }, status: :ok
   rescue => e
@@ -197,35 +176,5 @@ class Api::V1::FoodPlacesController < ApplicationController
     @food_place = FoodPlace.find(id_param)
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Food place not found" }, status: :not_found
-  end
-
-  def admin_params
-    params.permit(:is_vip)
-  end
-
-  def food_place_params
-    permitted = params.permit(
-      :business_name,
-      :description,
-      :menu_pdf,
-      :address,
-      { categories: [] },
-      :website,
-      :facebook,
-      :instagram,
-      :tiktok,
-      :phone,
-      :identification_code,
-      :document_pdf,
-      :working_schedule,
-      images: [],
-
-    )
-
-    if permitted[:working_schedule].is_a?(String)
-      permitted[:working_schedule] = JSON.parse(permitted[:working_schedule]) rescue {}
-    end
-
-    permitted
   end
 end

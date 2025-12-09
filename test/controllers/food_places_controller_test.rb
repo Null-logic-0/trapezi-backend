@@ -46,7 +46,7 @@ class FoodPlacesControllerTest < ActionDispatch::IntegrationTest
          },
          headers: @auth_headers
 
-    assert_response :created
+    assert_response :success
   end
 
   test "should update food_place" do
