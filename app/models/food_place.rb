@@ -17,6 +17,7 @@ class FoodPlace < ApplicationRecord
   include FoodPlace::CategoriesValidator
   include FoodPlace::WorkingScheduleMethods
   include FoodPlace::FoodPlaceHelpers
+  include FoodPlace::Scopes
   include AttachmentUrl
 
   # Validations
@@ -59,17 +60,4 @@ class FoodPlace < ApplicationRecord
     return 0 if reviews.empty?
     (reviews.sum(:rating).to_f / reviews.size).round(1)
   end
-
-  scope :vip, -> { where(is_vip: true) }
-  scope :free, -> { where(is_vip: false) }
-  scope :visible, -> { where(hidden: false) }
-
-  scope :search, ->(search_term) {
-    if search_term.present?
-      term = "%#{search_term.strip.downcase}%"
-      where("LOWER(business_name) LIKE ? OR LOWER(description) LIKE ?", term, term)
-    else
-      all
-    end
-  }
 end

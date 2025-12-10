@@ -23,10 +23,10 @@ class VideoTutorialsControllerTest < ActionDispatch::IntegrationTest
   test "should create video_tutorial" do
     log_in_as(@admin)
     post api_v1_video_tutorials_path, params: {
-      title: "video tutorial",
-      description: "video tutorial",
+      title: "video_tutorial tutorial",
+      description: "video_tutorial tutorial",
       thumbnail: fixture_file_upload("image1.jpg", "image/jpeg"),
-      video: fixture_file_upload("sample.mp4", "video/mp4")
+      video: fixture_file_upload("sample.mp4", "video_tutorial/mp4")
 
     }, headers: @auth_headers
     assert_response :success

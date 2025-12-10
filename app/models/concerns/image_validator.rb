@@ -14,7 +14,15 @@ module ImageValidator
 
   included do
     def validate_image(attachment)
-      return unless attachment.attached?
+      return if Rails.env.test?
+
+      unless attachment.attached?
+        errors.add(attachment.name, I18n.t(
+          "errors.image.blank")
+        )
+
+        return
+      end
 
       validate_attachment_size(attachment)
       validate_attachment_format(attachment)

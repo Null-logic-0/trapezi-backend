@@ -68,7 +68,7 @@ class Api::V1::VideoTutorialsController < ApplicationController
     end
 
   rescue ActiveRecord::RecordNotFound
-    render json: { error: "video tutorial not found" }, status: :not_found
+    render json: { error: "video_tutorial tutorial not found" }, status: :not_found
   end
 
   private
