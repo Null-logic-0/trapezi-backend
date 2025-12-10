@@ -9,6 +9,10 @@ ka:
     free_plan: "უფასო გეგმა მხოლოდ ერთი კვების ობიექტის შექმნის საშუალებას იძლევა"
     disallowed_content: "თქვენი კომენტარი შეიცავს დაუშვებელ შინაარსს"
     disallowed_images: "ეს სურათი არღვევს ჩვენი კონტენტის წესებს"
+    image:
+      blank: "სურათი სავალდებულოა"
+      too_large: "სურათის ზომა არ უნდა აღემოატებოდეს %{count}MB-ს"
+      invalid_format: "სურათი უნდა იყოს png, jpg ან jpeg ფორმატში"
   messages:
     password_updated: "პაროლი წარმატებით განახლდა."
   activerecord:

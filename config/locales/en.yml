@@ -9,6 +9,11 @@ en:
     free_plan: "Free plan allows only create one food place"
     disallowed_content: "Your review can’t be posted due to disallowed content"
     disallowed_images: "This image violates our content guidelines"
+    image:
+      blank: "Image is requried"
+      too_large: "Image must be less than %{count}MB"
+      invalid_format: "Image must be in png, jpg, or jpeg format"
+
   messages:
     password_updated: "Password successfully updated."
   activerecord:

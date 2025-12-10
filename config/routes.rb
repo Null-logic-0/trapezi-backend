@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       resources :users
       post "/signup", to: "users#create", as: :signup
       post "/confirm", to: "users#confirm", as: :confirm
+      post "/register_by_admin", to: "users#create_by_admin", as: :register_by_admin
       post "/login", to: "auth#create", as: :login
       post "/login_as_admin", to: "auth#login_as_admin", as: :login_as_admin
       post "/google_oauth", to: "auth#google_oauth", as: :google_oauth
