@@ -9,6 +9,7 @@ en:
     free_plan: "Free plan allows only create one food place"
     disallowed_content: "Your review can’t be posted due to disallowed content"
     disallowed_images: "This image violates our content guidelines"
+    business_account_required: "Business account is required"
     image:
       blank: "Image is requried"
       too_large: "Image must be less than %{count}MB"

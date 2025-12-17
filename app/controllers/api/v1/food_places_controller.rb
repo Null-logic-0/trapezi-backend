@@ -62,8 +62,20 @@ class Api::V1::FoodPlacesController < ApplicationController
   def create
     @food_place = current_user&.food_places&.build(FoodPlaces::ParamsService.build(params))
 
-    if @food_place.save
-      render json: @food_place, success: true, status: :created
+    if @food_place&.save
+      begin
+        checkout_url = handle_vip_payment!(@food_place)
+      rescue StandardError => e
+        render json: {
+          food_place: @food_place,
+          message: "Food place created, but payment initialization failed: #{e.message}"
+        }, status: :created
+      end
+
+      render json: {
+        food_place: @food_place,
+        checkout_url: checkout_url
+      }, status: :created
 
     else
       render json: {
@@ -82,7 +94,18 @@ class Api::V1::FoodPlacesController < ApplicationController
     end
 
     if @food_place.update(FoodPlaces::ParamsService.build(params))
-      render json: @food_place.as_json, status: :ok
+      begin
+        checkout_url = handle_vip_payment!(@food_place)
+      rescue StandardError => e
+        render json: {
+          food_place: @food_place,
+          message: "Food place updated, but payment initialization failed: #{e.message}"
+        }, status: :ok
+      end
+      render json: {
+        food_place: @food_place,
+        checkout_url: checkout_url
+      }, status: :ok
     else
       render json: { success: false, errors: formatted_errors(@food_place) }, status: :unprocessable_entity
     end
@@ -143,6 +166,23 @@ class Api::V1::FoodPlacesController < ApplicationController
   end
 
   private
+
+  def handle_vip_payment!(food_place)
+    return nil unless params[:is_vip] && params[:vip_plan].present?
+
+    service = FoodPlaces::VipPaymentService.new(
+      user: current_user,
+      food_place: food_place,
+      vip_plan: params[:vip_plan]
+    )
+
+    service.call
+  rescue StandardError => e
+    Rails.logger.error "VIP Payment Init Failed: #{e.message}"
+    Rails.logger.error e.backtrace&.join("\n")
+
+    raise e
+  end
 
   def validate_nsfw_images
     raw_images = params[:images] || params.dig(:images)

@@ -5,7 +5,7 @@ module User::UserStatus
     enum :plan, {
       free: "free",
       pro: "pro"
-    }, default: "free"
+    }
 
     validates :plan, inclusion: { in: plans.keys }
   end
@@ -16,6 +16,51 @@ module User::UserStatus
 
   def paid_plan?
     plan == "pro"
+  end
+
+  def activate_plan(plan_type)
+    duration = case plan_type
+    when "monthly" then 1.month
+    when "yearly" then 1.year
+    else 1.month
+    end
+
+    start_date = plan_expires_at && plan_expires_at > Time.current ? plan_expires_at : Time.current
+
+    transaction do
+      update!(
+        plan: "pro",
+        plan_expires_at: start_date + duration
+      )
+
+      food_places.update_all(hidden: false)
+    end
+  end
+
+  def activate_plan_for_testing
+    update!(
+      plan: "pro",
+      plan_expires_at: Time.current + 1.minute
+    )
+  end
+
+  def downgrade_expired_plan
+    return if plan == "free"
+    return if plan_expires_at.nil?
+    return if plan_expires_at > Time.current
+
+    transaction do
+      update!(plan: "free", plan_expires_at: nil)
+      enforce_free_plan_food_place_visibility!
+    end
+  end
+
+  def enforce_free_plan_food_place_visibility!
+    return unless plan == "free"
+
+    visible_places = food_places.where(hidden: false).order(:created_at)
+
+    visible_places.offset(1).update_all(hidden: true)
   end
 
   def add_strike!

@@ -57,8 +57,12 @@ Rails.application.routes.draw do
       get "admin/maintenance", to: "settings#maintenance_mode", as: :get_maintenance_mode
 
       # Video tutorials
-
       resources :video_tutorials
+
+      # TBC Payments
+      post "payments/create", to: "payments#create", as: "create_payment"
+      post "payments/callback", to: "payments#callback", as: "payment_callback"
+      post "payments/vip/food_place_callback", to: "food_place_vip_payments#callback", as: "payment_vip_place_callback"
     end
   end
 end

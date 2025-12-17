@@ -6,7 +6,7 @@ one:
   email: test1@example.com
   password_digest: <%= BCrypt::Password.create("password1234", cost: BCrypt::Engine::MIN_COST) %>
   is_admin: false
-  business_owner: false
+  business_owner: true
   moderator: false
   plan: pro
 

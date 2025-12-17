@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_08_145932) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_16_145623) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -96,23 +96,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_145932) do
     t.boolean "hidden", default: false
     t.boolean "is_open", default: false, null: false
     t.string "identification_code"
+    t.string "vip_plan"
     t.index ["user_id"], name: "index_food_places_on_user_id"
     t.index ["vip_expires_at"], name: "index_food_places_on_vip_expires_at"
   end
 
   create_table "payments", force: :cascade do |t|
+    t.string "order_id"
     t.bigint "user_id", null: false
-    t.bigint "food_place_id", null: false
-    t.string "pay_id"
+    t.decimal "amount"
     t.string "status"
-    t.integer "amount_cents"
-    t.string "currency"
-    t.string "duration_key"
-    t.jsonb "meta"
+    t.string "plan_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["food_place_id"], name: "index_payments_on_food_place_id"
-    t.index ["pay_id"], name: "index_payments_on_pay_id"
+    t.string "resource_type", null: false
+    t.bigint "resource_id", null: false
+    t.index ["order_id"], name: "index_payments_on_order_id"
+    t.index ["resource_type", "resource_id"], name: "index_payments_on_resource"
     t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
@@ -158,8 +158,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_145932) do
     t.string "confirmation_token"
     t.datetime "confirmation_sent_at"
     t.datetime "confirmed_at"
-    t.string "plan", default: "free", null: false
     t.integer "strike_count"
+    t.string "plan", default: "free"
+    t.datetime "plan_expires_at"
     t.index ["password_reset_token"], name: "index_users_on_password_reset_token"
   end
 
@@ -179,7 +180,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_145932) do
   add_foreign_key "favorites", "food_places"
   add_foreign_key "favorites", "users"
   add_foreign_key "food_places", "users"
-  add_foreign_key "payments", "food_places"
   add_foreign_key "payments", "users"
   add_foreign_key "reports", "food_places"
   add_foreign_key "reports", "users"

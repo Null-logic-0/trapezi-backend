@@ -8,11 +8,11 @@ class User < ApplicationRecord
   has_many :reviews, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :video_tutorials, dependent: :destroy
+  has_many :payment, dependent: :destroy
 
   has_one_attached :avatar, dependent: :destroy
 
   include AttachmentUrl
-  include ImageValidator
   include User::UserStatus
   include User::TokenGenerator
   include User::UserSanitizable
@@ -32,8 +32,6 @@ class User < ApplicationRecord
             presence: { message: I18n.t("activerecord.errors.models.user.attributes.password.blank") },
             length: { minimum: 10, message: I18n.t("activerecord.errors.models.user.attributes.password.too_short") },
             if: -> { password.present? || password_required? }
-
-  validate -> { validate_image(avatar) }
 
   def avatar_url
     file_url(avatar)

@@ -1,0 +1,8 @@
+:concurrency: 5
+:queues:
+  - default
+
+:schedule:
+  downgrade_expired_plans:
+    cron: "*/1 * * * *" # every 1 minute
+    class: "DowngradeExpiredPlansJob"
