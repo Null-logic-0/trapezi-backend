@@ -15,6 +15,8 @@ module FoodPlaces
         :identification_code,
         :document_pdf,
         :working_schedule,
+        :vip_plan,
+        :is_vip,
         images: [],
 
       )
