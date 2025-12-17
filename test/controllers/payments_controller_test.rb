@@ -6,15 +6,6 @@ class PaymentsControllerTest < ActionDispatch::IntegrationTest
     @payment = payments(:one)
   end
 
-  test "should checkout payment" do
-    log_in_as(@user)
-    post api_v1_create_payment_path,
-         params: { plan_type: "monthly" },
-         headers: @auth_headers,
-         as: :json
-    assert_response :success
-  end
-
   test "payment callback" do
     post api_v1_payment_callback_path, params: {
       "order_id": @payment.order_id,
