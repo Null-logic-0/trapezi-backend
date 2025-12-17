@@ -2,8 +2,7 @@ class Api::V1::FoodPlaceVipPaymentsController < ApplicationController
   before_action :require_login, except: [ :callback ]
 
   def callback
-    data = params.permit!.to_h
-    data = data["response"] if data["response"]
+    data = callback_params
 
     payment = Payment.find_by(order_id: data["order_id"])
     return render json: { error: "Not found" }, status: :not_found unless payment
@@ -22,5 +21,11 @@ class Api::V1::FoodPlaceVipPaymentsController < ApplicationController
     )
 
     render json: { status: "OK" }
+  end
+
+  private
+
+  def callback_params
+    params.require(:response).permit(:order_id, :order_status)
   end
 end

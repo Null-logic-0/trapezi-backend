@@ -11,7 +11,7 @@ class Api::V1::PaymentsController < ApplicationController
     end
 
     service = TbcPaymentsService.new
-    frontend_success_url = ENV["FRONTED_CHECKOUT_SUCCESS_URL"]
+    frontend_success_url = ENV["FRONTEND_CHECKOUT_SUCCESS_URL"]
     backend_callback_url = ENV["BACKEND_CALLBACK_URL"]
 
     order_id = "ORD-#{Time.now.to_i}-#{SecureRandom.hex(4)}"
@@ -41,7 +41,7 @@ class Api::V1::PaymentsController < ApplicationController
   end
 
   def callback
-    payment_data = params.permit!.to_h
+    payment_data = callback_params
     payment = Payment.find_by(order_id: payment_data["order_id"])
     return render json: { error: "Order not found" }, status: :not_found unless payment
     payment.update(status: payment_data["order_status"])
@@ -54,5 +54,11 @@ class Api::V1::PaymentsController < ApplicationController
     end
 
     render json: { status: "OK", plan: user.plan }
+  end
+
+  private
+
+  def callback_params
+    params.permit(:order_id, :order_status)
   end
 end

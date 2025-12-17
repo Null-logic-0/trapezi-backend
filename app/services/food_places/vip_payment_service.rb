@@ -47,7 +47,7 @@ module FoodPlaces
         order_id: order_id,
         amount: plan[:price],
         description: "VIP Activation",
-        response_url: ENV["FRONTED_CHECKOUT_SUCCESS_URL"],
+        response_url: ENV["FRONTEND_CHECKOUT_SUCCESS_URL"],
         callback_url: ENV["BACKEND_CALLBACK_URL"]
       )
     end
