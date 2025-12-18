@@ -8,6 +8,7 @@ class Api::V1::AdminDashboardStatsController < ApplicationController
     "6m" => 6.months,
     "1y" => 1.year
   }.freeze
+  ALLOWED_DATE_COLUMNS = %i[created_at updated_at].freeze
 
   def index
     current_from, previous_from, previous_to = time_ranges
@@ -94,14 +95,16 @@ class Api::V1::AdminDashboardStatsController < ApplicationController
 
   # Chart data (daily counts)
   def chart_data(model, date_column, from_date, to_date, sum_column = nil)
-    records = model
-    records = records.where("#{date_column} >= ?", from_date) if from_date
-    records = records.where("#{date_column} <= ?", to_date) if to_date
+    raise "Invalid column" unless ALLOWED_DATE_COLUMNS.include?(date_column.to_sym)
+
+    records = model.all
+    records = records.where(model.arel_table[date_column].gteq(from_date)) if from_date
+    records = records.where(model.arel_table[date_column].lteq(to_date)) if to_date
 
     grouped = if sum_column
-                records.group("DATE(#{date_column})").sum(sum_column)
+                records.group(Arel.sql("DATE(#{date_column})")).sum(sum_column)
     else
-                records.group("DATE(#{date_column})").count
+                records.group(Arel.sql("DATE(#{date_column})")).count
     end
 
     grouped.sort.map { |date, value| { date: date.to_s, value: value } }
