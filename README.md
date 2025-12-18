@@ -54,14 +54,16 @@ Git
 💻 Getting Started
 
 1. Clone the Repository
-   code
-   Bash
-   download
-   content_copy
-   expand_less
-   git clone https://github.com/Null-logic-0/trapezi-backend.git
-   cd trapezi-backend
-2. Environment Configuration
+   
+         code
+         Bash
+         download
+         content_copy
+         expand_less
+         git clone https://github.com/Null-logic-0/trapezi-backend.git
+         cd trapezi-backend
+   
+3. Environment Configuration
 
 Create a .env file in the root directory. You can copy a sample if one exists, or use the template below:
 
@@ -130,12 +132,12 @@ https://hub.docker.com/r/nospoon1919/trapezi-dev
 
 command:
 
-code
-Bash
-download
-content_copy
-expand_less
-docker-compose up --build
+      code
+      Bash
+      download
+      content_copy
+      expand_less
+      docker-compose up --build
 
 The server should now be running at http://localhost:3000.
 
@@ -145,25 +147,25 @@ Open a new terminal tab (while Docker is running) to create and migrate the data
 
 # Create the database
 
-docker-compose exec web rails db:create
+      docker-compose exec web rails db:create
 
 # Run migrations
 
-docker-compose exec web rails db:migrate
+      docker-compose exec web rails db:migrate
 
 # (Optional) Seed data
 
-docker-compose exec web rails db:seed
+      docker-compose exec web rails db:seed
 🧪 Running Tests
 
 To run the test suite inside the Docker container:
 
-code
-Bash
-download
-content_copy
-expand_less
-docker-compose exec web bundle exec rspec
+      code
+      Bash
+      download
+      content_copy
+      expand_less
+      docker-compose exec web bundle exec rspec
 
 # OR if using Minitest
 
