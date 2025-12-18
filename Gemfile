@@ -29,6 +29,7 @@ gem "google-cloud-vision", "~> 2.0"
 gem "mini_magick"
 gem "sidekiq"
 gem "sidekiq-scheduler"
+gem "groupdate"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

@@ -192,6 +192,8 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
+    groupdate (6.7.0)
+      activesupport (>= 7.1)
     grpc (1.76.0)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
@@ -480,6 +482,7 @@ DEPENDENCIES
   geocoder
   google-cloud-vision (~> 2.0)
   google-id-token
+  groupdate
   jbuilder
   jwt
   kamal
