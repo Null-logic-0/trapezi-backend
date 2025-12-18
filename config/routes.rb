@@ -63,6 +63,9 @@ Rails.application.routes.draw do
       post "payments/create", to: "payments#create", as: "create_payment"
       post "payments/callback", to: "payments#callback", as: "payment_callback"
       post "payments/vip/food_place_callback", to: "food_place_vip_payments#callback", as: "payment_vip_place_callback"
+
+      # Admin
+      get "dashboard", to: "admin_dashboard_stats#index", as: :dashboard
     end
   end
 end
