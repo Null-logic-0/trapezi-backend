@@ -10,6 +10,15 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    def encode_token(payload)
+      JWT.encode(payload, Rails.application.secret_key_base)
+    end
+
+    Rails.application.routes.default_url_options[:host] = "http://localhost:3000/"
+
+    def log_in_as(user)
+      token = encode_token({ user_id: user.id })
+      @auth_headers = { "Authorization" => "Bearer #{token}" }
+    end
   end
 end

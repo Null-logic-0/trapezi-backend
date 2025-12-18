@@ -1,31 +1,156 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  errors:
+    internal: "Request failed"
+    unauthorized: "You are not authorized"
+    invalid_credentials: "Email or password is invalid"
+    not_admin: "You are not authorized as admin"
+    registration_disabled: "Registration is currently disabled."
+    maintenance_mode_active: "We’re performing some updates. Thanks for your patience — we’ll be back online soon!"
+    free_plan: "Free plan allows only create one food place"
+    disallowed_content: "Your review can’t be posted due to disallowed content"
+    disallowed_images: "This image violates our content guidelines"
+    business_account_required: "Business account is required"
+    image:
+      blank: "Image is requried"
+      too_large: "Image must be less than %{count}MB"
+      invalid_format: "Image must be in png, jpg, or jpeg format"
+
+  messages:
+    password_updated: "Password successfully updated."
+  activerecord:
+    errors:
+      models:
+        video:
+          title:
+            blank: "Title is required"
+            too_long: "Title is too long"
+          description:
+            blank: "Description is required"
+            too_long: "Description must be at most 150 characters"
+          thumbnail:
+            blank: "Thumbnail is required"
+            too_large: "Thumbnail must be less than 8MB"
+            invalid_format: "Thumbnail must be in png, jpg, or jpeg format"
+          video:
+            blank: "Video upload is required"
+            too_large: "Video must be less than 800MB"
+            invalid_format: "Video must be in mov, mp4 format"
+        report:
+          title:
+            blank: "Title is required"
+          description:
+            blank: "Description is required"
+        blog:
+          title:
+            blank: "Title is required"
+            too_long: "Title is too long"
+          content:
+            blank: "Content is required"
+            too_long: "Content is too long maximum 5000 characters."
+          image:
+            blank: "Image is requried"
+            too_large: "Image must be less than 12MB"
+            invalid_format: "Image must be in png, jpg, or jpeg format"
+        user:
+          attributes:
+            name:
+              blank: "Name can't be blank"
+            last_name:
+              blank: "Last name can't be blank"
+            email:
+              blank: "Email is required"
+              invalid: "Email is invalid"
+              taken: "Email has already been taken"
+            password:
+              blank: "Password can't be blank"
+              too_short: "Password must be at least 10 characters"
+            password_confirmation:
+              confirmation: "Password confirmation doesn't match"
+            current_password:
+              blank: "Current password can't be blank"
+              invalid: "Current password is invalid"
+            avatar:
+              too_large: "Avatar must be less than 8MB"
+              invalid_format: "Avatar must be in png, jpg, or jpeg format"
+
+        food_place:
+          schedule:
+            closed: "Closed"
+          days:
+            monday: "Monday"
+            tuesday: "Tuesday"
+            wednesday: "Wednesday"
+            thursday: "Thursday"
+            friday: "Friday"
+            saturday: "Saturday"
+            sunday: "Sunday"
+          attributes:
+            business_name:
+              blank: "Business name can't be blank"
+            description:
+              blank: "Description can't be blank"
+              too_long: "Description must be at most 200 characters"
+            phone:
+              invalid_format: "Phone number is not valid"
+            identification_code:
+              blank: "Identification code is required"
+            address:
+              blank: "Address can't be blank"
+            categories:
+              blank: "Categories can't be blank"
+              too_many: "Maximum %{count} categories allowed"
+              invalid_entries: "Invalid entries: %{list}"
+            working_schedule:
+              blank: "Working schedule can't be blank"
+              invalid_format: "Working schedule must be a hash with per-day schedule"
+              missing_keys: "%{day} must have 'from' and 'to' keys"
+              invalid_time_format: "times must be in HH:MM format"
+              closing_before_opening: "closing time must be after opening time"
+            images:
+              blank: "At least one image must be attached"
+              invalid_format: "Images must be JPEG or PNG"
+              too_many: "Maximum %{count} images allowed"
+              too_large: "Image must be less than %{count}MB"
+            pdf:
+              blank: "PDF is required"
+              invalid_format: "File must be in PDF format"
+              too_large: "File must be less than %{count}MB"
+
+
+      errors:
+        invalid_credentials: "Email or password is invalid"
+        blocked_by_admin: "Your profile has been blocked"
+        google_user_cannot_reset: "Google account users cannot reset password via email."
+        invalid_token: "Error Occurred!"
+        invalid_or_expired_token: "Invalid or expired token."
+
+  mailer:
+    welcome:
+      title: "Welcome to Trapezi!"
+      greeting: "Hi %{name},"
+      intro: "We're excited to have you join Trapezi! Your account has been successfully created with %{email}."
+      description: "Trapezi is your go-to platform for discovering amazing local businesses. Whether you're looking for restaurants, cafes, bars, or bakeries, we've got you covered."
+      button: "Start Exploring"
+      closing: "Ready to explore? Click the button above to discover the best local spots in your area."
+      help: "Need help? Contact us at"
+      copyright: "© %{year} Trapezi. All rights reserved."
+    confirm_email:
+      sent: "Confirmation email sent!"
+      confirmation_subject: "Email confirmation instructions"
+      subject: "Confirm your email"
+      greeting: "Hello %{name},"
+      intro: "Please confirm your email to complete your registration."
+      button: "Confirm Email"
+      help: "If you didn’t create an account, please ignore this email. Need help?"
+    reset_password:
+      subject: "Reset Your Password"
+      greeting: "Hi %{name},"
+      intro: "We received a request to reset your password. Click the button below to set a new password."
+      button: "Reset Password"
+      expire: "This link will expire in 10 min."
+      help: "Need help? Contact us at"
+      instruction_sent: "If your email exists, you will receive reset instructions."
+
+
+
+
