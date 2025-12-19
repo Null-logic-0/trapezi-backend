@@ -27,22 +27,25 @@ module FoodPlace::WorkingScheduleMethods
 
     def currently_open(time = Time.current)
       today = time.strftime("%A").downcase
-      schedule = working_schedule[today] || {}
-      from_time = schedule["from"]
-      to_time = schedule["to"]
-      return false unless from_time && to_time
+      schedule = working_schedule[today]
+      return false unless schedule&.dig("from") && schedule&.dig("to")
 
-      from_hour, from_min = from_time.split(":").map(&:to_i)
-      to_hour, to_min = to_time.split(":").map(&:to_i)
+      now_minutes = time.hour * 60 + time.min
+      from_minutes = to_minutes(schedule["from"])
+      to_minutes = to_minutes(schedule["to"])
 
-      from_datetime = time.change(hour: from_hour, min: from_min)
-      to_datetime = time.change(hour: to_hour, min: to_min)
-
-      if from_datetime < to_datetime
-        time.between?(from_datetime, to_datetime)
+      if from_minutes < to_minutes
+        now_minutes >= from_minutes && now_minutes < to_minutes
       else
-        time >= from_datetime || time <= to_datetime
+        now_minutes >= from_minutes || now_minutes < to_minutes
       end
     end
+  end
+
+  private
+
+  def to_minutes(time_str)
+    h, m = time_str.split(":").map(&:to_i)
+    h * 60 + m
   end
 end

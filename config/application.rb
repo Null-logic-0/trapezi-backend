@@ -14,6 +14,9 @@ module TrapeziBackend
     config.eager_load_paths << Rails.root.join("app/services")
     config.active_job.queue_adapter = :sidekiq
 
+    config.time_zone = "Tbilisi"
+    config.active_record.default_timezone = :local
+
     # -------------------------
     # i18n configuration
     # -------------------------
