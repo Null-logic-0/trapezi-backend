@@ -20,7 +20,8 @@ module VideoTutorial::VideoValidator
       errors.add(:video, I18n.t("activerecord.errors.models.video.video.too_large"))
     end
 
-    acceptable_types = %w[video_tutorial/mov video_tutorial/mp4]
+    acceptable_types = %w[video/mp4 video/quicktime]
+
     unless acceptable_types.include?(video.content_type)
       errors.add(:video, I18n.t("activerecord.errors.models.video.video.invalid_format"))
     end
