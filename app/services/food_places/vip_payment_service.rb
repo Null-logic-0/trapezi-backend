@@ -1,5 +1,7 @@
 module FoodPlaces
   class VipPaymentService
+    DISCOUNT_PERCENT = 0.20
+
     def initialize(user:, food_place:, vip_plan: nil)
       @user = user
       @food_place = food_place
@@ -11,12 +13,14 @@ module FoodPlaces
       plan = FoodPlacePlanService::PLANS[plan_key]
 
       order_id = generate_order_id
+      base_price = plan[:price]
+      final_price = apply_discount(base_price)
 
       begin
         Payment.create!(
           user: @user,
           order_id: order_id,
-          amount: plan[:price],
+          amount: final_price,
           plan_type: plan_key,
           status: "pending",
           resource: @food_place
@@ -37,6 +41,17 @@ module FoodPlaces
     end
 
     private
+
+    def apply_discount(price)
+      return price unless pro_user?
+
+      discounted = price * (1 - DISCOUNT_PERCENT)
+      discounted.round(2)
+    end
+
+    def pro_user?
+      @user.respond_to?(:pro?) && @user.pro?
+    end
 
     def generate_order_id
       "VIP-#{Time.current.to_i}-#{SecureRandom.hex(4)}"
